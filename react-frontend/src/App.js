@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import Table from './Table';
-import Form from './Form';
+import Table from './RecipeTable';
+import Form from './RecipeForm';
 import axios from 'axios';
 
 
