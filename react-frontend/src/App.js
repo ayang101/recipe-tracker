@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import Table from './Table';
-import Form from './Form';
+import Table from './RecipeTable';
+import Form from './RecipeForm';
 import axios from 'axios';
 
 
@@ -35,11 +35,11 @@ function MyApp() {
   }
 
   // makes the GET request through API on the backend
-  // returns the data (list of users from the backend)
+  // returns the data (list of recipes from the backend)
   async function fetchAll(){
     try {
-      const response = await axios.get('http://localhost:5000/users');
-      return response.data.users_list;
+      const response = await axios.get('http://localhost:5000/recipes');
+      return response.data.recipes_list;
     }
     catch (error) {
       // we're not handling errors. Just logging into the console
@@ -50,7 +50,7 @@ function MyApp() {
 
   async function makePostCall(person){
     try {
-      const response = await axios.post('http://localhost:5000/users', person);
+      const response = await axios.post('http://localhost:5000/recipes', person);
       return response;
     }
     catch (error) {
@@ -62,7 +62,7 @@ function MyApp() {
   async function makeDeleteCall(index){
     try {
       var id = characters[index].id
-      const response = await axios.delete('http://localhost:5000/users/' + id);
+      const response = await axios.delete('http://localhost:5000/recipes/' + id);
       return response;
     }
     catch (error) {
