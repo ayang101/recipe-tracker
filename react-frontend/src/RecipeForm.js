@@ -14,7 +14,7 @@ function RecipeForm(props) {
             cookTime: "",
             totalTime: "",
             description: "",
-            ingredients: "",
+            ingredient_list: "",
             instructions: ""
         }
     );
@@ -33,7 +33,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "source") {
@@ -48,7 +48,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "image") {
@@ -63,7 +63,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "rating") {
@@ -78,7 +78,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "course") {
@@ -93,7 +93,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "category") {
@@ -108,7 +108,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "prepTime") {
@@ -123,7 +123,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "cookTime") {
@@ -138,7 +138,7 @@ function RecipeForm(props) {
                  cookTime: value,
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "totalTime") {
@@ -153,7 +153,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: value,
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
         } else if (name === "description") {
@@ -168,10 +168,10 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: value,
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: recipe['instructions']
                 });
-        } else if (name === "ingredients") {
+        } else if (name === "ingredient_list") {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
@@ -183,7 +183,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: value,
+                 ingredient_list: value,
                  instructions: recipe['instructions']
                 });
         } else if (name === "instructions") {
@@ -198,7 +198,7 @@ function RecipeForm(props) {
                  cookTime: recipe['cookTime'],
                  totalTime: recipe['totalTime'],
                  description: recipe['description'],
-                 ingredients: recipe['ingredients'],
+                 ingredient_list: recipe['ingredient_list'],
                  instructions: value
                 });
         }
@@ -218,7 +218,7 @@ function RecipeForm(props) {
             cookTime: "",
             totalTime: "",
             description: "",
-            ingredients: "",
+            ingredient_list: "",
             instructions: ""
         });
     }
@@ -302,12 +302,12 @@ function RecipeForm(props) {
                 id="description"
                 value={recipe.description}
                 onChange={handleChange} />
-            <label htmlFor="ingredients">Ingredients</label>
+            <label htmlFor="ingredient_list">Ingredients</label>
             <input
                 type="text"
-                name="ingredients"
-                id="ingredients"
-                value={recipe.ingredients}
+                name="ingredient_list"
+                id="ingredient_list"
+                value={recipe.ingredient_list}
                 onChange={handleChange} />
             <label htmlFor="instructions">Instructions</label>
             <input

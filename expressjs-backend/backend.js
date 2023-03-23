@@ -15,45 +15,45 @@ app.get("/", (req, res) => {
    const course = req.query["course"];
    const category = req.query["category"];
    const totalTime = req.query["totalTime"];
-   const ingredients = req.query["ingredients"];
+   const ingredient_list = req.query["ingredient_list"];
    if (name === undefined && course === undefined && category === undefined
-      && totalTime === undefined && ingredients === undefined) {
+      && totalTime === undefined && ingredient_list === undefined) {
      try {
        const recipes_from_db = await recipeServices.getRecipes();
-       res.send({ recipes_list: recipes_from_db });
+       res.send({ recipe_list: recipes_from_db });
      } catch (error) {
        console.log("Mongoose error: " + error);
        res.status(500).send("An error ocurred in the server.");
      }
    } else if (name && course === undefined && category === undefined
-      && totalTime === undefined && ingredients === undefined) {
+      && totalTime === undefined && ingredient_list === undefined) {
      let result = await recipeServices.findRecipeByName(name);
-     result = { recipes_list: result };
+     result = { recipe_list: result };
      res.send(result);
    } else if (course && name === undefined && category === undefined
-      && totalTime === undefined && ingredients === undefined) {
+      && totalTime === undefined && ingredient_list === undefined) {
      let result = await recipeServices.findRecipeByCourse(course);
-     result = { recipes_list: result };
+     result = { recipe_list: result };
      res.send(result);
    } else if (category && name === undefined && course === undefined
-      && totalTime === undefined && ingredients === undefined) {
+      && totalTime === undefined && ingredient_list === undefined) {
      let result = await recipeServices.findRecipeByCategory(category);
-     result = { recipes_list: result };
+     result = { recipe_list: result };
      res.send(result);
    } else if (totalTime && name === undefined && course === undefined
-      && category === undefined && ingredients === undefined) {
+      && category === undefined && ingredient_list === undefined) {
      let result = await recipeServices.findRecipeByTotalTime(totalTime);
-     result = { recipes_list: result };
+     result = { recipe_list: result };
      res.send(result);
-   } else if (ingredients && name === undefined && course === undefined
+   } else if (ingredient_list && name === undefined && course === undefined
       && category === undefined && totalTime === undefined) {
-     let result = await recipeServices.findRecipeByIngredients(ingredients);
-     result = { recipes_list: result };
+     let result = await recipeServices.findRecipeByIngredients(ingredient_list);
+     result = { recipe_list: result };
      res.send(result);
    } else {
      let result = await recipeServices.findRecipe(name, course, category,
-                                                  totalTime, ingredients);
-     result = { recipes_list: result };
+                                                  totalTime, ingredient_list);
+     result = { recipe_list: result };
      res.send(result);
    }
  });
@@ -64,7 +64,7 @@ app.get("/", (req, res) => {
    if (result === undefined || result === null) {
      res.status(404).send("Resource not found.");
    } else {
-     result = { recipes_list: result };
+     result = { recipe_list: result };
      res.send(result);
    }
  });

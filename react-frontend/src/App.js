@@ -39,7 +39,7 @@ function MyApp() {
   async function fetchAll(){
     try {
       const response = await axios.get('http://localhost:5000/recipes');
-      return response.data.recipes_list;
+      return response.data.recipe_list;
     }
     catch (error) {
       // we're not handling errors. Just logging into the console

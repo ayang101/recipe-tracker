@@ -65,7 +65,6 @@ async function findAndUpdate(id, recipe) {
   return updatedUser;
 }
 
-/* === New Function === */
 async function getAllUsernames() {
   var usernameList = (await userModel.find()).map(function (p) {
     return p.username;
@@ -74,7 +73,6 @@ async function getAllUsernames() {
   return usernameList;
 }
 
-/* === New Function === */
 async function verifyUser(username, password) {
   const user_query = { username: username, password: password };
   // const pass_query = { password: password };
@@ -110,12 +108,12 @@ async function deleteUser(id) {
   return await userModel.findByIdAndDelete(id);
 }
 
-async function deleteRecipe(userId, modId) {
+async function deleteRecipe(userId, recipeId) {
   let user = await userModel.findById(userId);
   const query = { name: user['name'] };
 
   return await userModel.updateOne(query, {
-    $pull: { recipe_list: modId }
+    $pull: { recipe_list: recipeId }
   });
 }
 
