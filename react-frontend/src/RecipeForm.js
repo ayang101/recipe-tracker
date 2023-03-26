@@ -205,7 +205,7 @@ function RecipeForm(props) {
     }
 
     function submitForm() {
-        props.handleSubmit(person);
+        props.handleSubmit(recipe);
         setRecipe({
             name: "",
             source: "",

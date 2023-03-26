@@ -1,36 +1,35 @@
 import React, {useState, useEffect} from 'react';
-import Table from './RecipeTable';
-import Form from './RecipeForm';
+import RecipeTable from './RecipeTable';
+import RecipeForm from './RecipeForm';
 import axios from 'axios';
 
 
 function MyApp() { 
-  const [characters, setCharacters] = useState([]);
+  const [recipes, setRecipes] = useState([]);
 
   useEffect(() => {
     fetchAll().then( result => {
       if (result)
-        setCharacters(result);
+        setRecipes(result);
     });
   }, [] );
 
-  function removeOneCharacter (index) {
+  function removeOneRecipe (index) {
     makeDeleteCall(index).then( result => {
       if (result && result.status === 204) {
-        const updated = characters.filter((character, i) => {
+        const updated = recipes.filter((recipe, i) => {
           return i !== index
         });
-        setCharacters(updated);
+        setRecipes(updated);
       }
     });
   }
 
-  function updateList(person) {
-    makePostCall(person).then( result => {
-      person = result.data;
-      //console.log(result.user);
+  function updateList(recipe) {
+    makePostCall(recipe).then( result => {
+      recipe = result.data;
     if (result && result.status === 201)
-      setCharacters([...characters, person]);
+      setRecipes([...recipes, recipe]);
     });
   }
 
@@ -48,9 +47,9 @@ function MyApp() {
     }
   }
 
-  async function makePostCall(person){
+  async function makePostCall(recipe){
     try {
-      const response = await axios.post('http://localhost:5000/recipes', person);
+      const response = await axios.post('http://localhost:5000/recipes', recipe);
       return response;
     }
     catch (error) {
@@ -61,7 +60,7 @@ function MyApp() {
 
   async function makeDeleteCall(index){
     try {
-      var id = characters[index].id
+      var id = recipes[index].id
       const response = await axios.delete('http://localhost:5000/recipes/' + id);
       return response;
     }
@@ -74,8 +73,8 @@ function MyApp() {
 
   return (
     <div className="container">
-      <Table characterData={characters} removeCharacter={removeOneCharacter} />
-      <Form handleSubmit={updateList} />
+      <RecipeTable recipeData={recipes} removeRecipe={removeOneRecipe} />
+      <RecipeForm handleSubmit={updateList} />
     </div>
   );
 }

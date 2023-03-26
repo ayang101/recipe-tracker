@@ -79,12 +79,12 @@ async function getRecipes(name, source, image, rating, course, category,
 
 async function findRecipeById(id) {
   try {
-    const u = await recipeModel.findById(id);
-    const query = { _id: u._id };
+    const recipe = await recipeModel.findById(id);
+    const query = { _id: recipe._id };
 
-    const recipesList = await recipeModel.find(query).populate('recipe_list');
+    const ingredientList = await recipeModel.find(query).populate('ingredient_list');
 
-    return recipesList[0].recipe_list;
+    return ingredientList[0].ingredient_list;
   } catch (error) {
     console.log(error);
     return undefined;
@@ -102,15 +102,15 @@ async function addRecipe(recipe) {
   }
 }
 
-async function findAndUpdate(id, recipe) {
-    let new_recipe = await recipeModel.findById(id);
-    const query = { _id: new_recipe._id };
+async function findAndUpdate(id, ingredients) {
+    let recipe = await recipeModel.findById(id);
+    const query = { _id: recipe._id };
 
     var updatedRecipe = await recipeModel.updateOne(query, {
-        $push: { ingredient_list: ingredient_list._id }
+        $push: { ingredient_list: ingredients._id }
     });
 
-    new_recipe.save();
+    recipe.save();
     return updatedRecipe;
 }
 
@@ -172,7 +172,7 @@ async function deleteRecipe(id) {
 
 async function deleteIngredient(recipeId, ingrId) {
   let recipe = await recipeModel.findById(recipeId);
-  const query = { name: recipe['name'] };
+  const query = { _id: recipe._id };
 
   return await recipeModel.updateOne(query, {
     $pull: { ingredient_list: ingrId }

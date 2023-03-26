@@ -16,7 +16,7 @@ function RecipeTableHeader()  {
 }
 
 function RecipeTableBody(props) {
-    const rows = props.characterData.map((row, index) => {
+    const rows = props.recipeData.map((row, index) => {
     return (
         <tr key={index}>
           <td>{row.name}</td>
@@ -26,7 +26,7 @@ function RecipeTableBody(props) {
           <td>{row.category}</td>
           <td>{row.totalTime}</td>
           <td>
-            <button onClick={() => props.removeCharacter(index)}>Delete</button>
+            <button onClick={() => props.removeRecipe(index)}>Delete</button>
           </td>
         </tr>
     );
@@ -43,7 +43,7 @@ function RecipeTable(props) {
     return (
         <table>
           <RecipeTableHeader />
-          <RecipeTableBody characterData={props.characterData} removeCharacter={props.removeCharacter} />
+          <RecipeTableBody recipeData={props.recipeData} removeRecipe={props.removeRecipe} />
         </table>
     );
 }

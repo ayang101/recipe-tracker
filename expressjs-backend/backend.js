@@ -3,6 +3,10 @@ const app = express();
 const port = 5000;
 const cors = require('cors');
 
+const userServices = require('./models/user-services');
+const recipeServices = require('./models/recipe-services');
+const ingredientServices = require('./models/ingredient-services');
+
 app.use(cors());
 app.use(express.json());
 
@@ -71,9 +75,19 @@ app.get("/", (req, res) => {
  
  app.delete("/recipes/:id", async (req, res) => {
    const id = req.params["id"];
+   console.log(id);
    if (deleteRecipeById(id)) res.status(204).end();
    else res.status(404).send("Resource not found.");
  });
+
+ async function deleteRecipeById(id) {
+  try {
+    if (await recipeServices.deleteRecipe(id)) return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
  
  app.post("/recipes", async (req, res) => {
    const recipe = req.body;
@@ -91,6 +105,17 @@ app.get("/", (req, res) => {
      res.status(500).send("An error ocurred in the server.");
    }
  });
+
+ async function updateRecipe(id, updatedRecipe) {
+  try {
+    const result = await recipeServices.findByIdAndUpdate(id, updatedRecipe);
+    if (result) return 204;
+    else return 404;
+  } catch (error) {
+    console.log(error);
+    return 500;
+  }
+}
  
  app.listen(process.env.PORT || port, () => {
    if (process.env.PORT) {
