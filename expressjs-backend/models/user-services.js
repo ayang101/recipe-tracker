@@ -75,7 +75,6 @@ async function getAllUsernames() {
 
 async function verifyUser(username, password) {
   const user_query = { username: username, password: password };
-  // const pass_query = { password: password };
   try {
     let userId = await userModel.find(user_query);
     console.log(userId);

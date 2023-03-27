@@ -75,9 +75,9 @@ test('finding a recipe by id and updating the ingredient list', async () => {
   const ingredient = {
     name: 'test'
   };
-  let mod = new recipeModel(recipe);
+  let rec = new recipeModel(recipe);
   let savedIngredient = new ingredientModel(ingredient);
-  savedRecipe = await recipeServices.addRecipe(mod);
+  savedRecipe = await recipeServices.addRecipe(rec);
   await recipeServices.findAndUpdate(savedRecipe['_id'], savedIngredient);
   expect(
     (await recipeServices.findRecipeByName('a'))[0]['ingredient_list'][0]
@@ -93,9 +93,9 @@ test('finding a recipe by id and deleting a ingredient', async () => {
   const ingredient = {
     name: 'test'
   };
-  let mod = new recipeModel(recipe);
+  let rec = new recipeModel(recipe);
   let savedIngredient = new ingredientModel(ingredient);
-  savedRecipe = await recipeServices.addRecipe(mod);
+  savedRecipe = await recipeServices.addRecipe(rec);
   await recipeServices.findAndUpdate(savedRecipe['_id'], savedIngredient);
   ingredientList = await recipeServices.deleteIngredient(
     savedRecipe['_id'],
@@ -114,9 +114,9 @@ test('finding a recipe by ingredient list', async () => {
   const ingredient = {
     name: 'test'
   };
-  let mod = new recipeModel(recipe);
+  let rec = new recipeModel(recipe);
   let savedIngredient = new ingredientModel(ingredient);
-  savedRecipe = await recipeServices.addRecipe(mod);
+  savedRecipe = await recipeServices.addRecipe(rec);
   await recipeServices.findAndUpdate(savedRecipe['_id'], savedIngredient);
   let result = await recipeServices.findRecipeByIngredients([savedIngredient]);
   expect(result[0]['_id']).toStrictEqual(savedRecipe['_id']);
@@ -131,7 +131,7 @@ test('getting a list of recipes', async () => {
   const ingredient = {
     name: 'test'
   };
-  let mod = new recipeModel(recipe);
+  let rec = new recipeModel(recipe);
   let savedIngredient = new ingredientModel(ingredient);
   expect(
     await recipeServices.getRecipes(undefined, undefined, undefined,
@@ -140,7 +140,7 @@ test('getting a list of recipes', async () => {
                                     undefined, undefined, undefined,
                                     undefined)
   ).toStrictEqual(await recipeModel.find());
-  savedRecipe = await recipeServices.addRecipe(mod);
+  savedRecipe = await recipeServices.addRecipe(rec);
   await recipeServices.findAndUpdate(savedRecipe['_id'], savedIngredient);
   let result1 = await recipeServices.getRecipes(
     undefined,
