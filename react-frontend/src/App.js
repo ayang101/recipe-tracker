@@ -6,6 +6,7 @@ import axios from 'axios';
 
 function MyApp() { 
   const [recipes, setRecipes] = useState([]);
+  const [ingredients, setIngredients] = useState([]);
 
   useEffect(() => {
     fetchAll().then( result => {
@@ -38,7 +39,7 @@ function MyApp() {
   async function fetchAll(){
     try {
       const response = await axios.get('http://localhost:5000/recipes');
-      return response.data.recipe_list;
+      return response.data.recipes_list;
     }
     catch (error) {
       // we're not handling errors. Just logging into the console
@@ -60,7 +61,7 @@ function MyApp() {
 
   async function makeDeleteCall(index){
     try {
-      var id = recipes[index].id
+      var id = recipes[index]._id
       const response = await axios.delete('http://localhost:5000/recipes/' + id);
       return response;
     }

@@ -14,7 +14,7 @@ function RecipeForm(props) {
             cookTime: "",
             totalTime: "",
             description: "",
-            ingredient_list: "",
+            ingredient_list: [],
             instructions: ""
         }
     );
@@ -218,7 +218,7 @@ function RecipeForm(props) {
             cookTime: "",
             totalTime: "",
             description: "",
-            ingredient_list: "",
+            ingredient_list: [],
             instructions: ""
         });
     }

@@ -24,7 +24,7 @@ const IngredientSchema = new mongoose.Schema(
       trim: true
     }
   },
-  { collection: 'ingredient_list' }
+  { collection: 'ingredients_list' }
 );
 
 const Ingredient = mongoose.model('Ingredient', IngredientSchema);

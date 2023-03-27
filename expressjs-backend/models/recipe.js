@@ -67,7 +67,7 @@ const RecipeSchema = new mongoose.Schema(
     },
     ingredient_list: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }]
   },
-  { collection: 'recipe_list' }
+  { collection: 'recipes_list' }
 );
 
 const Recipe = mongoose.model('Recipe', RecipeSchema);
