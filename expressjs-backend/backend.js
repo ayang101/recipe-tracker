@@ -14,6 +14,7 @@ app.get("/", (req, res) => {
    res.send("Hello World!");
  });
  
+ // recipes
  app.get("/recipes", async (req, res) => {
    const name = req.query["name"];
    const course = req.query["course"];
@@ -98,6 +99,48 @@ app.get("/", (req, res) => {
   }
 }
 */
+
+// ingredients
+app.post('/recipes/:id', async (req, res) => {
+  const id = req.params['id'];
+  const newIngredient = await ingredientServices.addIngredient(req.body);
+  let recipe = await ingredientServices.findAndUpdate(id, newIngredient);
+
+  if (recipe) res.status(201).send(newIngredient._id);
+  else res.status(500).end();
+});
+
+app.delete('/recipes/:recipeId/:ingredientId', async (req, res) => {
+  const recipeId = req.params['recipeId'];
+  const ingredientId = req.params['ingredientId'];
+
+  if (deleteIngredientByRecipeAndIngredientId(recipeId, ingredientId)) res.status(204).end();
+  else res.status(404).end();
+});
+
+async function deleteIngredientByRecipeAndIngredientId(recipeId, ingredientId) {
+  try {
+    if (
+      (await ingredientServices.deleteIngredient(ingredientId)) &&
+      (await ingredientServices.deleteIngredient(recipeId, ingredientId))
+    )
+      return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+app.get('/recipes/:recipeId/:ingredientId', async (req, res) => {
+  const ingredientId = req.params['ingredientId'];
+  let result = await ingredientServices.findIngredientById(ingredientId);
+  if (result === undefined || result === null)
+    res.status(404).send('Resource not found.');
+  else {
+    res.send(result);
+  }
+});
+
  app.listen(process.env.PORT || port, () => {
    if (process.env.PORT) {
      console.log(`REST API is listening on port: ${process.env.PORT}.`);
