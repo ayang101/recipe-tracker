@@ -25,7 +25,12 @@ async function getIngredients(name, photo, description, quantity) {
 }
 
 async function findIngredientById(id) {
-    return await ingredientModel.findById(id);
+  let result = await ingredientModel.findById(id);
+  if (result === null) {
+    return undefined;
+  } else {
+    return result;
+  }
 }
 
 async function addIngredient(ingredient) {
