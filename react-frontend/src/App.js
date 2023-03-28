@@ -1,6 +1,10 @@
 import React, {useState, useEffect} from 'react';
+import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
 import RecipeForm from './RecipeForm';
+import NavBar from './Nav';
+import Home from './Home';
+import ErrorPage from './ErrorPage';
 import axios from 'axios';
 
 
@@ -74,8 +78,24 @@ function MyApp() {
 
   return (
     <div className="container">
-      <RecipeTable recipeData={recipes} removeRecipe={removeOneRecipe} />
-      <RecipeForm handleSubmit={updateList} />
+      <BrowserRouter basename="/">
+        <Routes>
+          <Route path="/" element={<NavBar />}>
+            <Route index element={<Home />} />
+            <Route
+              path="/recipes"
+              element={
+                <RecipeTable
+                  recipeData={recipes}
+                  removeRecipe={removeOneRecipe}
+                />
+              }
+            />
+            <Route path="/recipes/form" element={<RecipeForm handleSubmit={updateList} />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
