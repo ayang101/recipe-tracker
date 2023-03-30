@@ -103,6 +103,7 @@ app.get("/", (req, res) => {
 // ingredients
 app.post('/recipes/:id', async (req, res) => {
   const id = req.params['id'];
+  console.log("body of request: ", req.body)
   const newIngredient = await ingredientServices.addIngredient(req.body);
   let recipe = await ingredientServices.findAndUpdate(id, newIngredient);
 

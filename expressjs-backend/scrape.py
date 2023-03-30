@@ -1,16 +1,19 @@
 import requests
-import json
+# import json
 from bs4 import BeautifulSoup
 
 
-def from_url_to_html(url: str, file_in: str) -> None:
+def from_url_to_html(url: str, file_in: str) -> str:
     """ given a url, returns the url's html file"""
     # specify user-agent to have access to scrape website
-    response = requests.get(url, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0) Gecko/20100101 Firefox/50.0'})
+    response = requests.get(url, headers={'User-Agent':
+                            'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:50.0)' +
+                                          'Gecko/20100101 Firefox/50.0'})
     soup = BeautifulSoup(response.content, "html.parser")
     # write html to a new file
     with open(file_in, "w", encoding='utf-8') as file:
         file.write(str(soup.prettify()))
+    return file.name
 
 
 def parse_html(file_in: str) -> dict:
@@ -20,9 +23,9 @@ def parse_html(file_in: str) -> dict:
         soup = BeautifulSoup(contents, "html.parser")
     # store the target data into a list
     result_dict = dict()
-    for script in soup.find_all("script", type="application/ld+json"):
+    """for script in soup.find_all("script", type="application/ld+json"):
         # load json into a dictionary
-        json_dict = json.loads(script.contents[0])
+        json_dict = json.loads(script.contents[0])"""
     # fill dictionary with json data
     """
     result_dict['name'] = json_dict[0].get('headline')
@@ -34,7 +37,8 @@ def parse_html(file_in: str) -> dict:
     result_dict['servingSize'] = json_dict[0].get('')
     result_dict['prepTime'] = json_dict[0].get('prepTime')
     result_dict['cookTime'] = json_dict[0].get('cookTime')
-    result_dict['totalTime'] = json_dict[0].get('prepTime') + json_dict[0].get('cookTime')
+    result_dict['totalTime'] = json_dict[0].get('prepTime') +
+                               json_dict[0].get('cookTime')
     result_dict['description'] = json_dict[0].get('description')
     result_dict['instructions'] = []
     temp = json_dict[0].get('recipeInstructions')
@@ -47,7 +51,7 @@ def parse_html(file_in: str) -> dict:
         if tag.get("property", None) == "og:title":
             result_dict['name'] = tag.get("content", None)
         elif tag.get("property", None) == "og:url":
-            result_dict['source'] =  tag.get("content", None)
+            result_dict['source'] = tag.get("content", None)
         elif tag.get("property", None) == "og:image":
             result_dict['image'] = tag.get("content", None)
         elif tag.get("property", None) == "og:image:width":
@@ -65,12 +69,9 @@ def parse_html(file_in: str) -> dict:
     return result_dict
 
 
-if __name__ == "__main__":
-    html_content = from_url_to_html("https://www.allrecipes.com/recipe/21014/good-old-fashioned-pancakes/",
-                                    "output_file")
-    parse_html("output_file")
-    """
-    html_content_2 = from_url_to_html("https://natashaskitchen.com/easy-strawberry-cake/",
-                                      "output_file_2")
-    parse_html("output_file_2")
-    """
+def extract(url: str) -> dict:
+    result = parse_html(from_url_to_html(url, "output_file"))
+    return result
+
+
+# if __name__ == "__main__":
