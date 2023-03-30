@@ -43,7 +43,8 @@ function RecipeTable(props) {
     return (
         <table>
           <RecipeTableHeader />
-          <RecipeTableBody recipeData={props.recipeData} removeRecipe={props.removeRecipe} />
+          <RecipeTableBody recipeData={props.recipeData}
+                           removeRecipe={props.removeRecipe} />
         </table>
     );
 }

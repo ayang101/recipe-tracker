@@ -239,6 +239,7 @@ function RecipeForm(props) {
                 id="source"
                 value={recipe.source}
                 onChange={handleChange} />
+{/*
             <label htmlFor="image">Image</label>
             <input
                 type="text"
@@ -316,6 +317,7 @@ function RecipeForm(props) {
                 id="instructions"
                 value={recipe.instructions}
                 onChange={handleChange} />
+    */}
             <input type="button" value= "Submit" onClick={submitForm} />
         </form>
     );
