@@ -1,4 +1,6 @@
 import React from 'react'
+import { Link } from "react-router-dom";
+
 
 function RecipeTableHeader()  {
     return (
@@ -19,7 +21,11 @@ function RecipeTableBody(props) {
     const rows = props.recipeData.map((row, index) => {
     return (
         <tr key={index}>
-          <td>{row.name}</td>
+          <td>
+            <Link to={`/recipes/${row._id}` }>
+              {row.name}
+            </Link>
+          </td>
           <td>{row.image}</td>
           <td>{row.rating}</td>          
           <td>{row.course}</td>

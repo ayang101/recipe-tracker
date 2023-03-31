@@ -2,6 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
 import RecipeForm from './RecipeForm';
+import RecipeDetail from './RecipeDetail'
 import NavBar from './Nav';
 import Home from './Home';
 import ErrorPage from './ErrorPage';
@@ -10,7 +11,7 @@ import axios from 'axios';
 
 function MyApp() { 
   const [recipes, setRecipes] = useState([]);
-  const [ingredients, setIngredients] = useState([]);
+  const [details, setDetails] = useState([]);
 
   useEffect(() => {
     fetchAll().then( result => {
@@ -91,7 +92,18 @@ function MyApp() {
                 />
               }
             />
-            <Route path="/recipes/form" element={<RecipeForm handleSubmit={updateList} />} />
+            <Route 
+              path="/recipes/form"
+              element={<RecipeForm 
+                         handleSubmit={updateList} />} />
+            <Route
+              path="/recipes/:id"
+              element={
+                <RecipeDetail
+                  recipeData={recipes}
+                />
+              }
+            />
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>
