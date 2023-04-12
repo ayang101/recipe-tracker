@@ -37,6 +37,7 @@ function RecipeForm(props) {
                  instructions: recipe['instructions']
                 });
         } else if (name === "source") {
+            //result = extract(name)
             setRecipe(
                 {name: recipe['name'],
                  source: value,
