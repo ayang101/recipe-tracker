@@ -3,8 +3,8 @@ import { useParams } from 'react-router-dom'
 
 
 function RecipeDetail(props) {
-    const {recipeId} = useParams();
-    const currRecipe = props.recipeData.find(rec => rec.id === recipeId);
+    const recipeId = useParams().id;
+    const currRecipe = props.recipeData.find(rec => {return rec._id === recipeId});
 
     return (
         <div>
