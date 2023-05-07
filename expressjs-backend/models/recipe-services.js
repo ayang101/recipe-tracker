@@ -84,7 +84,7 @@ async function findRecipeById(id) {
 
     const ingredientList = await recipeModel.find(query).populate('ingredient_list');
 
-    return ingredientList[0].ingredient_list;
+    return recipe;
   } catch (error) {
     console.log(error);
     return undefined;
@@ -102,10 +102,42 @@ async function addRecipe(recipe) {
   }
 }
 
-async function findAndUpdate(id, ingredients) {
+async function findAndUpdate(id, image, rating, course, category,
+  servingSize, prepTime, cookTime, totalTime, description, instructions,
+  ingredients) {
     let recipe = await recipeModel.findById(id);
     const query = { _id: recipe._id };
 
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { image: image._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { rating: rating._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { course: course._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { category: category._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { servingSize: servingSize._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { prepTime: prepTime._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { cookTime: cookTime._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { totalTime: totalTime._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { description: description._id }
+    });
+    var updatedRecipe = await recipeModel.updateOne(query, {
+      $push: { instructions: instructions._id }
+    });
     var updatedRecipe = await recipeModel.updateOne(query, {
         $push: { ingredient_list: ingredients._id }
     });
