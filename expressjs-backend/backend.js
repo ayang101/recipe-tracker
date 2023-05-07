@@ -1,4 +1,8 @@
 const express = require('express');
+// in order to create child process
+// referenced from https://medium.com/swlh/run-python-script-from-node-js-and
+// -send-data-to-browser-15677fcf199f
+const {spawn} = require('child_process');
 const app = express();
 const port = 5000;
 const cors = require('cors');
@@ -45,14 +49,41 @@ app.get("/", (req, res) => {
  });
  
  app.get("/recipes/:id", async (req, res) => {
-   const id = req.params["id"];
-   let result = await recipeServices.findRecipeById(id);
-   if (result === undefined || result === null) {
-     res.status(404).send("Resource not found.");
-   } else {
-     result = { recipes_list: result };
-     res.send(result);
-   }
+  var dataToSend;
+
+  const id = req.params["id"];
+  let result = await recipeServices.findRecipeById(id);
+  if (result === undefined || result === null) {
+    res.status(404).send("Resource not found.");
+  } else {
+    result = { recipes_list: result };
+    // create a new child process to call python script
+    console.log('source: ' + result.recipes_list.source)
+    const childProcess = spawn('python', ['scrape.py', result.recipes_list.source]);
+    // retreive emitted data from child process
+    childProcess.stdout.on('data', function(data) {
+      console.log('Pipe data from python script ...');
+      // TODO: retrieved data is probabliy not a string, should be a list
+      dataToSend = data.toString();
+      console.log('dataToSend: ' + dataToSend)
+      if(dataToSend === "url is invalid") {
+        console.error(`invalid url: ${result.recipes_list.source}`);
+      }
+    });
+    // return error if exists
+    childProcess.stderr.on('data', data => {
+      console.error(`stderr: ${data}`);
+    });
+    // assume the child process's stream is closed in order to close event
+    childProcess.on('close', (code) => {
+      console.log(`child process closed all stdio with code ${code}`);
+      // update object
+      // TODO: update recipe using the data returned by the python script
+      //recipeServices.findAndUpdate(id, )
+      // send data to browser
+      res.send(dataToSend);
+    });
+  }
  });
  
  app.delete("/recipes/:id", async (req, res) => {
