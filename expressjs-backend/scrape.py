@@ -1,6 +1,7 @@
 import requests
-# import json
 from bs4 import BeautifulSoup
+import sys
+import validators
 
 
 def from_url_to_html(url: str, file_in: str) -> str:
@@ -74,4 +75,15 @@ def extract(url: str) -> dict:
     return result
 
 
-# if __name__ == "__main__":
+def main():
+    # validate the url
+    if validators.url(sys.argv[1]):
+        # parse information given url
+        print(parse_html(from_url_to_html(sys.argv[1], 'file.html')))
+    else:
+        print('url is invalid')
+    sys.stdout.flush()
+
+
+if __name__ == "__main__":
+    main()
