@@ -49,40 +49,13 @@ app.get("/", (req, res) => {
  });
  
  app.get("/recipes/:id", async (req, res) => {
-  var dataToSend;
-
   const id = req.params["id"];
   let result = await recipeServices.findRecipeById(id);
   if (result === undefined || result === null) {
     res.status(404).send("Resource not found.");
   } else {
     result = { recipes_list: result };
-    // create a new child process to call python script
-    console.log('source: ' + result.recipes_list.source)
-    const childProcess = spawn('python', ['scrape.py', result.recipes_list.source]);
-    // retreive emitted data from child process
-    childProcess.stdout.on('data', function(data) {
-      console.log('Pipe data from python script ...');
-      // TODO: retrieved data is probabliy not a string, should be a list
-      dataToSend = data.toString();
-      console.log('dataToSend: ' + dataToSend)
-      if(dataToSend === "url is invalid") {
-        console.error(`invalid url: ${result.recipes_list.source}`);
-      }
-    });
-    // return error if exists
-    childProcess.stderr.on('data', data => {
-      console.error(`stderr: ${data}`);
-    });
-    // assume the child process's stream is closed in order to close event
-    childProcess.on('close', (code) => {
-      console.log(`child process closed all stdio with code ${code}`);
-      // update object
-      // TODO: update recipe using the data returned by the python script
-      //recipeServices.findAndUpdate(id, )
-      // send data to browser
-      res.send(dataToSend);
-    });
+    res.send(result);
   }
  });
  
@@ -102,8 +75,52 @@ app.get("/", (req, res) => {
 }
  
  app.post("/recipes", async (req, res) => {
-  const recipe = req.body;
+  var recipe = req.body;
+  var dataToSend;
+  var recipe_obj;
+
+  // create a new child process to call python script
+  const childProcess = spawn('python', ['scrape.py', recipe.source]);
+  // retreive emitted data from child process
+  childProcess.stdout.on('data', function(data) {
+    console.log('Pipe data from python script ...');
+    // TODO: retrieved data is probabliy not a string, should be a list
+    dataToSend = data.toString();
+    // replace single quote with double quote
+    dataToSend = dataToSend.replace(/'/g, '"');
+    console.log('dataToSend before: ' + dataToSend);
+    recipe_obj = JSON.parse(dataToSend);
+    if(dataToSend === "url is invalid") {
+      console.error(`invalid url: ${result.source}`);
+    } else {
+      console.log('data to send: ' + dataToSend);
+      // TODO: child process does not preserve modified value of recipe
+      // parent receives unmodified recipe object
+      // need to find a way to pass modified value to parent in order for
+      //    parent to use updated recipe object
+      recipe.name = recipe_obj.name;
+      // source is provided
+      recipe.image = recipe_obj.image;
+      recipe.description = recipe_obj.description;
+      console.log('recipe: ' + recipe)
+    }
+  });
+  // return error if exists
+  childProcess.stderr.on('data', data => {
+    console.error(`stderr: ${data}`);
+  });
+  // assume the child process's stream is closed in order to close event
+  childProcess.on('close', (code) => {
+    console.log(`child process closed all stdio with code ${code}`);
+    // update object
+    // TODO: update recipe using the data returned by the python script
+    //recipeServices.findAndUpdate(id, )
+    // send data to browser
+    // res.send(dataToSend);
+  });
+
   const savedRecipe = await recipeServices.addRecipe(recipe);
+  console.log('saved recipe: ' + savedRecipe);
   if (savedRecipe) res.status(201).send(savedRecipe);
   else res.status(500).end();
  });

@@ -2,6 +2,7 @@ import requests
 from bs4 import BeautifulSoup
 import sys
 import validators
+from urllib.parse import quote
 
 
 def from_url_to_html(url: str, file_in: str) -> str:
@@ -62,7 +63,7 @@ def parse_html(file_in: str) -> dict:
         elif tag.get("property", None) == "og:image:type":
             result_dict['image type'] = tag.get("content", None)
         elif tag.get("property", None) == "og:description":
-            result_dict['description'] = tag.get("content", None)
+            result_dict['description'] = quote(tag.get("content", None))
 
     """for entry in result_dict:
         print(entry, "\n", result_dict[entry], "\n\n")"""
