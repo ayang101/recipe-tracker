@@ -53,17 +53,17 @@ def parse_html(file_in: str) -> dict:
         if tag.get("property", None) == "og:title":
             result_dict['name'] = tag.get("content", None)
         elif tag.get("property", None) == "og:url":
-            result_dict['source'] = tag.get("content", None)
+            result_dict['source'] = quote(tag.get("content", None))
         elif tag.get("property", None) == "og:image":
-            result_dict['image'] = tag.get("content", None)
-        elif tag.get("property", None) == "og:image:width":
+            result_dict['image'] = quote(tag.get("content", None))
+        elif tag.get("property", None) == "og:description":
+            result_dict['description'] = quote(tag.get("content", None))
+        """elif tag.get("property", None) == "og:image:width":
             result_dict['image width'] = tag.get("content", None)
         elif tag.get("property", None) == "og:image:height":
             result_dict['image height'] = tag.get("content", None)
         elif tag.get("property", None) == "og:image:type":
-            result_dict['image type'] = tag.get("content", None)
-        elif tag.get("property", None) == "og:description":
-            result_dict['description'] = quote(tag.get("content", None))
+            result_dict['image type'] = tag.get("content", None)"""
 
     """for entry in result_dict:
         print(entry, "\n", result_dict[entry], "\n\n")"""
