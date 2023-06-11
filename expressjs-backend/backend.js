@@ -3,6 +3,7 @@ const express = require('express');
 // referenced from https://medium.com/swlh/run-python-script-from-node-js-and
 // -send-data-to-browser-15677fcf199f
 const {spawn} = require('child_process');
+const{fork} = require('child_process');
 const app = express();
 const port = 5000;
 const cors = require('cors');
@@ -76,51 +77,25 @@ app.get("/", (req, res) => {
  
  app.post("/recipes", async (req, res) => {
   var recipe = req.body;
+
+  // reference:
+  // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
+  const execSync = require("child_process").execSync;
+  const result = execSync("python scrape.py " + recipe.source);
+  console.log('result: ' + result);
+
   var dataToSend;
-  var recipe_obj;
+  dataToSend = result.toString();
+  // replace single quote with double quote
+  dataToSend = dataToSend.replace(/'/g, '"');
+  recipe_obj = JSON.parse(dataToSend);
+  // usage found in:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
+  recipe_obj.source = decodeURIComponent(recipe_obj.source);
+  recipe_obj.image = decodeURIComponent(recipe_obj.image);
+  recipe_obj.description = decodeURIComponent(recipe_obj.description);
 
-  // create a new child process to call python script
-  const childProcess = spawn('python', ['scrape.py', recipe.source]);
-  // retreive emitted data from child process
-  childProcess.stdout.on('data', function(data) {
-    console.log('Pipe data from python script ...');
-    // TODO: retrieved data is probabliy not a string, should be a list
-    dataToSend = data.toString();
-    // replace single quote with double quote
-    dataToSend = dataToSend.replace(/'/g, '"');
-    console.log('dataToSend before: ' + dataToSend);
-    recipe_obj = JSON.parse(dataToSend);
-    if(dataToSend === "url is invalid") {
-      console.error(`invalid url: ${result.source}`);
-    } else {
-      console.log('data to send: ' + dataToSend);
-      // TODO: child process does not preserve modified value of recipe
-      // parent receives unmodified recipe object
-      // need to find a way to pass modified value to parent in order for
-      //    parent to use updated recipe object
-      recipe.name = recipe_obj.name;
-      // source is provided
-      recipe.image = recipe_obj.image;
-      recipe.description = recipe_obj.description;
-      console.log('recipe: ' + recipe)
-    }
-  });
-  // return error if exists
-  childProcess.stderr.on('data', data => {
-    console.error(`stderr: ${data}`);
-  });
-  // assume the child process's stream is closed in order to close event
-  childProcess.on('close', (code) => {
-    console.log(`child process closed all stdio with code ${code}`);
-    // update object
-    // TODO: update recipe using the data returned by the python script
-    //recipeServices.findAndUpdate(id, )
-    // send data to browser
-    // res.send(dataToSend);
-  });
-
-  const savedRecipe = await recipeServices.addRecipe(recipe);
-  console.log('saved recipe: ' + savedRecipe);
+  const savedRecipe = await recipeServices.addRecipe(recipe_obj);
   if (savedRecipe) res.status(201).send(savedRecipe);
   else res.status(500).end();
  });
