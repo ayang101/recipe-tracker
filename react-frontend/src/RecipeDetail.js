@@ -9,18 +9,27 @@ function RecipeDetail(props) {
     return (
         <div>
             <h1>{currRecipe.name}</h1>
-            <p>Source: ${currRecipe.source}</p>
-            <p>Image: ${currRecipe.image}</p>
-            <p>Rating: ${currRecipe.rating}</p>
-            <p>Course: ${currRecipe.course}</p>
-            <p>Category: ${currRecipe.category}</p>
-            <p>Servings: ${currRecipe.servingSize}</p>
-            <p>Prep Time: ${currRecipe.prepTime}</p>
-            <p>Cook Time: ${currRecipe.cookTime}</p>
-            <p>Total Time: ${currRecipe.totalTime}</p>
-            <p>Description: ${currRecipe.description}</p>
-            <p>Ingredients: ${currRecipe.ingredients}</p>
-            <p>Instructions: ${currRecipe.instructions}</p>
+            <p>Source:
+                <a href= {currRecipe.source} target="_blank">
+                    {currRecipe.source}
+                </a>
+            </p>
+            <p>Image:</p>
+            <p><a href= {currRecipe.source} target="_blank">
+                <img src={currRecipe.image} 
+                    alt="Photo of recipe"
+                    width="50%"/>
+            </a></p>
+            <p>Rating: {currRecipe.rating}</p>
+            <p>Course: {currRecipe.course}</p>
+            <p>Category: {currRecipe.category}</p>
+            <p>Servings: {currRecipe.servingSize}</p>
+            <p>Prep Time: {currRecipe.prepTime}</p>
+            <p>Cook Time: {currRecipe.cookTime}</p>
+            <p>Total Time: {currRecipe.totalTime}</p>
+            <p>Description: {currRecipe.description}</p>
+            <p>Ingredients: {currRecipe.ingredients}</p>
+            <p>Instructions: {currRecipe.instructions}</p>
         </div>
     )
 }
