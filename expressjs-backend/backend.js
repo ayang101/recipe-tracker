@@ -2,8 +2,6 @@ const express = require('express');
 // in order to create child process
 // referenced from https://medium.com/swlh/run-python-script-from-node-js-and
 // -send-data-to-browser-15677fcf199f
-const {spawn} = require('child_process');
-const{fork} = require('child_process');
 const app = express();
 const port = 5000;
 const cors = require('cors');
