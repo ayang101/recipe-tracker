@@ -1,7 +1,4 @@
 const express = require('express');
-// in order to create child process
-// referenced from https://medium.com/swlh/run-python-script-from-node-js-and
-// -send-data-to-browser-15677fcf199f
 const app = express();
 const port = 5000;
 const cors = require('cors');
@@ -23,7 +20,7 @@ app.get("/", (req, res) => {
    const course = req.query["course"];
    const category = req.query["category"];
    const totalTime = req.query["totalTime"];
-   const ingredient_list = req.query["ingredient_list"];
+   const ingredients = req.query["ingredients"];
    try {
     const result = await recipeServices.getRecipes(
       name,
@@ -38,7 +35,7 @@ app.get("/", (req, res) => {
       totalTime,
       undefined,
       undefined,
-      ingredient_list
+      ingredients
     );
     res.send({ recipes_list: result });
   } catch (error) {
@@ -86,6 +83,7 @@ app.get("/", (req, res) => {
   dataToSend = result.toString();
   // replace single quote with double quote
   dataToSend = dataToSend.replace(/'/g, '"');
+  dataToSend = dataToSend.replace('None', '""');
   recipe_obj = JSON.parse(dataToSend);
   // usage found in:
   // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
@@ -93,33 +91,29 @@ app.get("/", (req, res) => {
   recipe_obj.image = decodeURIComponent(recipe_obj.image);
   recipe_obj.description = decodeURIComponent(recipe_obj.description);
 
+  // additional data of type ld+json
+  recipe_obj.rating = recipe_obj.rating;
+  recipe_obj.course = recipe_obj.course;
+  recipe_obj.category = recipe_obj.category;
+  recipe_obj.serving = recipe_obj.serving;
+
+  // TODO: convert prep, cook, and total time to Number
+  /*
+  if (recipe_obj.rating != undefined){
+    recipe_obj.prepTime = decodeURIComponent(recipe_obj.prepTime);
+  } if (recipe_obj.rating != undefined){
+    recipe_obj.cookTime = decodeURIComponent(recipe_obj.cookTime);
+  } if (recipe_obj.rating != undefined){
+    recipe_obj.totalTime = decodeURIComponent(recipe_obj.totalTime);
+  }
+  */
+  recipe_obj.ingredients = recipe_obj.ingredients;
+  recipe_obj.instructions = recipe_obj.instructions;
+
   const savedRecipe = await recipeServices.addRecipe(recipe_obj);
   if (savedRecipe) res.status(201).send(savedRecipe);
   else res.status(500).end();
  });
- /*
- app.patch("/recipes/:id", async (req, res) => {
-   const id = req.params["id"];
-   const updatedRecipe = req.body;
-   const result = await updateRecipe(id, updatedRecipe);
-   if (result === 204) res.status(204).end();
-   else if (result === 404) res.status(404).send("Resource not found.");
-   else if (result === 500) {
-     res.status(500).send("An error ocurred in the server.");
-   }
- });
-
- async function updateRecipe(id, updatedRecipe) {
-  try {
-    const result = await recipeServices.findByIdAndUpdate(id, updatedRecipe);
-    if (result) return 204;
-    else return 404;
-  } catch (error) {
-    console.log(error);
-    return 500;
-  }
-}
-*/
 
 // ingredients
 app.post('/recipes/:id', async (req, res) => {
