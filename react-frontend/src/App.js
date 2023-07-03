@@ -2,7 +2,9 @@ import React, {useState, useEffect} from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
 import RecipeForm from './RecipeForm';
-import RecipeDetail from './RecipeDetail'
+import RecipeDetail from './RecipeDetail';
+import LoginForm from './LoginForm';
+import SignupForm from './SignupForm';
 import NavBar from './Nav';
 import Home from './Home';
 import ErrorPage from './ErrorPage';
@@ -104,6 +106,12 @@ function MyApp() {
                 />
               }
             />
+            <Route
+              path="/login"
+              element={<LoginForm />} />
+            <Route
+              path="/signup"
+              element={<SignupForm />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>

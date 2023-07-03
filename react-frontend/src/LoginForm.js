@@ -27,7 +27,7 @@ function LoginForm(props) {
                 name="password"
                 id="password"
                 value={password} />
-            <input type="button" value="Submit" onCLick={submitForm} />
+            <input type="button" value="Submit" onClick={submitForm} />
         </form>
     );
 }
