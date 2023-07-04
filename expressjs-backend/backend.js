@@ -14,6 +14,14 @@ app.get("/", (req, res) => {
    res.send("Hello World!");
  });
  
+// users
+app.post("/signup", async (req, res) => {
+  var user = req.body;
+  const savedUser = await userServices.addUser(user);
+  if (savedUser) res.status(201).send(savedUser);
+  else res.status(500).end();
+});
+
  // recipes
  app.get("/recipes", async (req, res) => {
    const name = req.query["name"];
