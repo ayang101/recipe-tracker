@@ -1,48 +1,115 @@
 import React, {useState} from 'react';
 
 function SignupForm(props) {
-    const [email, setEmail] = useState('');
-    const [uname, setUName] = useState('');
-    const [password, setPassword] = useState('');
-    const [password2, setPassword2] = useState('');
-    const [errorMsgs, setErrorMsgs] = useState({});
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [user, setUser] = useState({
+        name: '',
+        email: '',
+        username: '',
+        password: '',
+        confirmPassword: ''
+    });
 
-    function handleChange(event) {}
+    function handleChange(event) {
+        const { name, value } = event.target;
+        if (name === 'name') {
+            setUser({
+                name: value,
+                email: user['email'],
+                username: user['username'],
+                password: user['password'],
+                confirmPassword: user['confirmPassword']
+            });
+        } else if (name === 'email') {
+            setUser({
+                name: user['name'],
+                email: value,
+                username: user['username'],
+                password: user['password'],
+                confirmPassword: user['confirmPassword']
+            });
+        } else if (name === 'username') {
+            setUser({
+                name: user['name'],
+                email: user['email'],
+                username: value,
+                password: user['password'],
+                confirmPassword: user['confirmPassword']
+            });
+        } else if (name === 'password') {
+            setUser({
+                name: user['name'],
+                email: user['email'],
+                username: user['username'],
+                password: value,
+                confirmPassword: user['confirmPassword']
+            });
+        } else if (name === 'confirmPassword') {
+            setUser({
+                name: user['name'],
+                email: user['email'],
+                username: user['username'],
+                password: user['password'],
+                confirmPassword: value
+            });
+        }
+    }
 
-    function submitForm() {}
+    function submitForm() {
+        props.handleSubmit(user);
+        if (user.password === user.confirmPassword) {
+            setUser({
+                name: '',
+                email: '',
+                username: '',
+                password: '',
+                confirmPassword: ''
+            });
+        }
+    }
 
 
     return (
         <form>
+            <label htmlFor="name">Name</label>
+            <input
+                type="text"
+                placeholder="Name"
+                name="name"
+                id="name"
+                value={user.name}
+                onChange={handleChange} />
             <label htmlFor="email">Email</label>
             <input
                 type="text"
                 placeholder="example@gmail.com"
                 name="email"
                 id="email"
-                value={email} />
+                value={user.email}
+                onChange={handleChange} />
             <label htmlFor="username">Username</label>
             <input
                 type="text"
                 placeholder="Username"
                 name="username"
                 id="username"
-                value={uname} />
+                value={user.username}
+                onChange={handleChange} />
             <label htmlFor="password">Password</label>
             <input
                 type="text"
                 placeholder="********"
                 name="password"
                 id="password"
-                value={password} />
-            <label htmlFor="password2">Confirm Password</label>
+                value={user.password}
+                onChange={handleChange} />
+            <label htmlFor="confirmPassword">Confirm Password</label>
             <input
                 type="text"
                 placeholder="********"
-                name="password2"
-                id="password2"
-                value={password2} />
+                name="confirmPassword"
+                id="confirmPassword"
+                value={user.confirmPassword}
+                onChange={handleChange} />
             <input type="button" value="Submit" onClick={submitForm} />
         </form>
     );
