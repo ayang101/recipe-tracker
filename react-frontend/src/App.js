@@ -14,6 +14,26 @@ import axios from 'axios';
 function MyApp() { 
   const [recipes, setRecipes] = useState([]);
   const [details, setDetails] = useState([]);
+  const [users, setUsers] = useState([]);
+
+  function updateUserList(user) {
+    makePostCallUser(user).then( result => {
+      user = result.data;
+    if (result && result.status === 201)
+      setUsers([...users, user]);
+    });
+  }
+
+  async function makePostCallUser(user){
+    try {
+      const response = await axios.post('http://localhost:5000/signup', user);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
 
   useEffect(() => {
     fetchAll().then( result => {
@@ -111,7 +131,8 @@ function MyApp() {
               element={<LoginForm />} />
             <Route
               path="/signup"
-              element={<SignupForm />} />
+              element={<SignupForm
+                         handleSubmit={updateUserList} />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>
