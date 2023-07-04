@@ -1,14 +1,32 @@
 import React, {useState} from 'react';
 
 function LoginForm(props) {
-    const [uname, setUName] = useState('');
-    const [password, setPassword] = useState('');
-    const [errorMsgs, setErrorMsgs] = useState({});
-    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [user, setUser] = useState({
+        username: '',
+        password: ''
+    });
 
-    function handleChange(event) {}
+    function handleChange(event) {
+        const { name, value } = event.target;
+        if (name === 'username') {
+            setUser({
+                username: value,
+                password: user['password']
+            });
+        } else if (name === 'password') {
+            setUser({
+                username: user['username'],
+                password: value
+            });
+        }
+    }
 
-    function submitForm() {}
+    function submitForm() {
+        setUser({
+            username: '',
+            password: ''
+        });
+    }
 
 
     return (
@@ -19,14 +37,16 @@ function LoginForm(props) {
                 placeholder="Username"
                 name="username"
                 id="username"
-                value={uname} />
+                value={user.username}
+                onChange={handleChange} />
             <label htmlFor="password">Password</label>
             <input
                 type="text"
                 placeholder="********"
                 name="password"
                 id="password"
-                value={password} />
+                value={user.password}
+                onChange={handleChange} />
             <input type="button" value="Submit" onClick={submitForm} />
         </form>
     );
