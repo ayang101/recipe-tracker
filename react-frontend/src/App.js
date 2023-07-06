@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Link, Route, Routes, Navigate } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
 import RecipeForm from './RecipeForm';
 import RecipeDetail from './RecipeDetail';
@@ -15,6 +15,8 @@ function MyApp() {
   const [recipes, setRecipes] = useState([]);
   const [details, setDetails] = useState([]);
   const [users, setUsers] = useState([]);
+  const [currUser, setCurrUser] = useState(null);
+  const [authenticated, setAuthenticated] = useState(null);
 
   function updateUserList(user) {
     makePostCallUser(user).then( result => {
@@ -31,6 +33,27 @@ function MyApp() {
     }
     catch (error) {
       console.log(error);
+      return false;
+    }
+  }
+
+  function authenticateUser(user) {
+    authUser(user).then( result => {
+      user = result.data;
+    if (result && result.status === 201)
+      setCurrUser(user);
+    });
+  }
+
+  async function authUser(user) {
+    try {
+      const response = await axios.post('http://localhost:5000/login/' + user.username + '/' + user.password);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      // popup alert message
+      //alert(error);
       return false;
     }
   }
@@ -128,11 +151,21 @@ function MyApp() {
             />
             <Route
               path="/login"
-              element={<LoginForm />} />
+              element={<LoginForm
+                         handleSubmit={authenticateUser}
+                         isAuthenticated={authenticated} />} />
+            <Route
+              path="/login/:username"
+              element={
+                <Home />
+              }
+            />
             <Route
               path="/signup"
               element={<SignupForm
                          handleSubmit={updateUserList} />} />
+            { authenticated && 
+              <Navigate to="/" /> }
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>

@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 
+
 function LoginForm(props) {
     const [user, setUser] = useState({
         username: '',
@@ -22,6 +23,8 @@ function LoginForm(props) {
     }
 
     function submitForm() {
+        props.handleSubmit(user);
+        props.isAuthenticated = true;
         setUser({
             username: '',
             password: ''
