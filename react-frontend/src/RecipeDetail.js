@@ -22,14 +22,33 @@ function RecipeDetail(props) {
             </a></p>
             <p>Rating: {currRecipe.rating}</p>
             <p>Course: {currRecipe.course}</p>
-            <p>Category: {currRecipe.category}</p>
+            <p>Cuisine: {currRecipe.cuisine}</p>
             <p>Servings: {currRecipe.servingSize}</p>
             <p>Prep Time: {currRecipe.prepTime}</p>
             <p>Cook Time: {currRecipe.cookTime}</p>
+            <p>Additional Time: {currRecipe.additionalTime}</p>
             <p>Total Time: {currRecipe.totalTime}</p>
             <p>Description: {currRecipe.description}</p>
-            <p>Ingredients: {currRecipe.ingredients}</p>
-            <p>Instructions: {currRecipe.instructions}</p>
+            <p>Ingredients: </p>
+            <ul>
+                {currRecipe.ingredients.map((element, index) => {
+                    return(
+                        <li key={index}>
+                            {element}
+                        </li>
+                    );
+                })}
+            </ul>
+            <p>Instructions:</p>
+            <ol>
+                {currRecipe.instructions.map((element, index) => {
+                    return(
+                        <li key={index}>
+                            {element}
+                        </li>
+                    );
+                })}
+            </ol>
         </div>
     )
 }

@@ -29,7 +29,7 @@ function RecipeTableBody(props) {
           <td>{row.image}</td>
           <td>{row.rating}</td>          
           <td>{row.course}</td>
-          <td>{row.category}</td>
+          <td>{row.cuisine}</td>
           <td>{row.totalTime}</td>
           <td>
             <button onClick={() => props.removeRecipe(index)}>Delete</button>
