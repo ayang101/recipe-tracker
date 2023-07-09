@@ -3,7 +3,9 @@ from bs4 import BeautifulSoup
 import sys
 import validators
 from urllib.parse import quote
-import json
+from recipe_scrapers import scrape_me
+
+NOT_FOUND_MSG = ''
 
 
 def from_url_to_html(url: str, file_in: str) -> str:
@@ -19,70 +21,85 @@ def from_url_to_html(url: str, file_in: str) -> str:
     return file.name
 
 
-def parse_html(file_in: str) -> dict:
+def format_times(minutes: int) -> str:
+    result = ''
+    num_hours = 0
+    num_minutes = 0
+
+    num_hours = minutes // 60
+    num_minutes = minutes % 60
+
+    if num_hours > 0:
+        if num_hours > 1:
+            result += str(num_hours) + ' hours '
+        else:
+            result += str(num_hours) + ' hour '
+    if num_minutes > 1 or (num_minutes == 0 and len(result) == 0):
+        result += str(num_minutes) + ' minutes'
+    if num_minutes == 1:
+        result += str(num_minutes) + ' minute'
+    return result
+
+
+def parse_html(url: str, file_in: str) -> dict:
     """ given an html file, returns the desired information """
     with open(file_in, "r", encoding='utf-8') as fp:
         contents = fp.read()
         soup = BeautifulSoup(contents, "html.parser")
     # store the target data into a list
     result_dict = dict()
-    for script in soup.find_all("script", type="application/ld+json"):
-        # load json into a dictionary
-        json_dict = json.loads(script.contents[0])
-    # fill dictionary with json data
+
+    # using recipe-scrapers tool
+    scraper = scrape_me(url)
     try:
-        temp = json_dict[0]
-        rating_val = json_dict[0].get('aggregateRating')['ratingValue']
-        rec_course = json_dict[0].get('recipeCourse')
-        rec_category = json_dict[0].get('recipeCategory')[0]
-        rec_serving = json_dict[0].get('servingSize')
-        cont = True
+        result_dict['rating'] = scraper.ratings()
     except:
-        cont = False
-    """
-    prep_time = json_dict[0].get('prepTime')
-    cook_time = json_dict[0].get('cookTime')
-    """
-
-    if cont is True:
-        if rating_val is not None:
-            result_dict['rating'] = rating_val
-        if rec_course is not None:
-            result_dict['course'] = rec_course
-        if rec_category is not None:
-            result_dict['category'] = rec_category
-        if rec_serving is not None:
-            result_dict['servingSize'] = rec_serving
-        """ TODO: format prepTime and cookTime so that they can be added
-                to compute the total time
-        """
-        """
-        if prep_time is not None:
-            result_dict['prepTime'] = prep_time
-        if cook_time is not None:
-            result_dict['cookTime'] = cook_time
-        result_dict['totalTime'] = json_dict[0].get('prepTime') \
-            + json_dict[0].get('cookTime')
-        """
-
-        """ TODO: recipe instructions could be stored as an array or a string """
-        result_str = ""
-        # ----result_dict['instructions'] = []
-        temp = json_dict[0].get('recipeInstructions')
-        for index in range(len(temp)):
-            # ----result_dict['instructions'].append(temp[index]['text'])
-            result_str += temp[index]['text'] + '\n'
-        # store the instructions as a string
-        if len(result_str) > 0:
-            result_dict['instructions'] = result_str
-
-        temp = json_dict[0].get('recipeIngredient')
-        result_str = ""
-        for index in range(len(temp)):
-            result_str += temp[index] + ',\n'
-        # store the ingredients as a string
-        if len(result_str) > 0:
-            result_dict['ingredients'] = result_str
+        pass
+    try:
+        result_dict['course'] = scraper.category()
+    except:
+        pass
+    try:
+        result_dict['cuisine'] = scraper.cuisine()
+    except:
+        pass
+    try:
+        # cuisine of food includes fruits, vegetables, grains, protein, and dairy
+        # result_dict['cuisine'] = scraper.cuisine()
+        serving_size = scraper.yields().split()[0]
+        result_dict['servingSize'] = serving_size
+    except:
+        pass
+    try:
+        result_dict['prepTime'] = format_times(int(scraper.prep_time()))
+    except:
+        pass
+    try:
+        result_dict['cookTime'] = format_times(int(scraper.cook_time()))
+    except:
+        pass
+    try:
+        temp = int(scraper.total_time()) - (int(scraper.prep_time())
+                                            + int(scraper.cook_time()))
+        result_dict['additionalTime'] = format_times(temp)
+    except:
+        pass
+    try:
+        result_dict['totalTime'] = format_times(int(scraper.total_time()))
+    except:
+        pass
+    try:
+        result_dict['author'] = scraper.author()
+    except:
+        pass
+    try:
+        result_dict['instructions'] = scraper.instructions().split('\n')
+    except:
+        pass
+    try:
+        result_dict['ingredients'] = scraper.ingredients()
+    except:
+        pass
 
     # fill dictionary with metadata
     for tag in soup.find_all("meta"):
@@ -107,7 +124,8 @@ def main():
     # validate the url
     if validators.url(sys.argv[1]):
         # parse information given url
-        print(parse_html(from_url_to_html(sys.argv[1], 'file.html')))
+        print(parse_html(sys.argv[1],
+                         from_url_to_html(sys.argv[1], 'file.html')))
     else:
         print('url is invalid')
     sys.stdout.flush()

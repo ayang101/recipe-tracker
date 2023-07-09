@@ -3,7 +3,7 @@ const recipeModel = require('./recipe');
 
 connectMongoDB();
 
-async function getRecipes(name, source, image, rating, course, category,
+async function getRecipes(name, source, image, rating, course, cuisine,
                         servingSize, prepTime, cookTime, totalTime,
                         description, instructions, ingredient_list) {
   let result;
@@ -13,7 +13,7 @@ async function getRecipes(name, source, image, rating, course, category,
     image === undefined &&
     rating === undefined &&
     course === undefined &&
-    category === undefined &&
+    cuisine === undefined &&
     servingSize === undefined &&
     prepTime === undefined &&
     cookTime === undefined &&
@@ -23,52 +23,52 @@ async function getRecipes(name, source, image, rating, course, category,
     ingredient_list === undefined
   ) {
     result = await recipeModel.find();
-  } else if (name && !source && !image && !rating && !course && !category &&
+  } else if (name && !source && !image && !rating && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !totalTime &&
              !description && !instructions && !ingredient_list) {
     result = await findRecipeByName(name);
-  } else if (source && !name && !image && !rating && !course && !category &&
+  } else if (source && !name && !image && !rating && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !totalTime &&
              !description && !instructions && !ingredient_list) {
     result = await findRecipeBySource(source);
-  } else if (image && !name && !source && !rating && !course && !category &&
+  } else if (image && !name && !source && !rating && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !totalTime &&
              !description && !instructions && !ingredient_list) {
     result = await findRecipeByImage(image);
-  } else if (rating && !name && !source && !image && !course && !category &&
+  } else if (rating && !name && !source && !image && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !totalTime &&
              !description && !instructions && !ingredient_list) {
     result = await findRecipeByRating(rating);
-  } else if (course && !name && !source && !image && !rating && !category &&
+  } else if (course && !name && !source && !image && !rating && !cuisine &&
            !servingSize && !prepTime && !cookTime && !totalTime &&
            !description && !instructions && !ingredient_list) {
     result = await findRecipeByCourse(course);
-  } else if (category && !name && !source && !image && !rating && !course &&
+  } else if (cuisine && !name && !source && !image && !rating && !course &&
            !servingSize && !prepTime && !cookTime && !totalTime &&
            !description && !instructions && !ingredient_list) {
-    result = await findRecipeByCategory(category);
+    result = await findRecipeByCategory(cuisine);
   } else if (servingSize && !name && !source && !image && !rating && !course &&
-           !category && !prepTime && !cookTime && !totalTime &&
+           !cuisine && !prepTime && !cookTime && !totalTime &&
            !description && !instructions && !ingredient_list) {
     result = await findRecipeByServingSize(servingSize);
   } else if (prepTime && !name && !source && !image && !rating && !course &&
-           !category && !servingSize && !cookTime && !totalTime &&
+           !cuisine && !servingSize && !cookTime && !totalTime &&
            !description && !instructions && !ingredient_list) {
     result = await findRecipeByPrepTime(prepTime);
   } else if (cookTime && !name && !source && !image && !rating && !course &&
-           !category && !servingSize && !prepTime && !totalTime &&
+           !cuisine && !servingSize && !prepTime && !totalTime &&
            !description && !instructions && !ingredient_list) {
     result = await findRecipeByCookTime(cookTime);
   } else if (totalTime && !name && !source && !image && !rating && !course &&
-           !category && !servingSize && !prepTime && !cookTime &&
+           !cuisine && !servingSize && !prepTime && !cookTime &&
            !description && !instructions && !ingredient_list) {
     result = await findRecipeByTotalTime(totalTime);
   } else if (description && !name && !source && !image && !rating && !course &&
-           !category && !servingSize && !prepTime && !cookTime && !totalTime &&
+           !cuisine && !servingSize && !prepTime && !cookTime && !totalTime &&
            !instructions && !ingredient_list) {
     result = await findRecipeByDescription(description);
   } else if (instructions && !name && !source && !image && !rating && !course &&
-           !category && !servingSize && !prepTime && !cookTime && !totalTime &&
+           !cuisine && !servingSize && !prepTime && !cookTime && !totalTime &&
            !description && !ingredient_list) {
     result = await findRecipeByInstructions(instructions);
   } else {
@@ -102,7 +102,7 @@ async function addRecipe(recipe) {
   }
 }
 
-async function findAndUpdate(id, image, rating, course, category,
+async function findAndUpdate(id, image, rating, course, cuisine,
   servingSize, prepTime, cookTime, totalTime, description, instructions,
   ingredients) {
     let recipe = await recipeModel.findById(id);
@@ -118,7 +118,7 @@ async function findAndUpdate(id, image, rating, course, category,
       $push: { course: course._id }
     });
     var updatedRecipe = await recipeModel.updateOne(query, {
-      $push: { category: category._id }
+      $push: { cuisine: cuisine._id }
     });
     var updatedRecipe = await recipeModel.updateOne(query, {
       $push: { servingSize: servingSize._id }
@@ -166,8 +166,8 @@ async function findRecipeByCourse(course) {
     return await recipeModel.find({ course: course });
 }
 
-async function findRecipeByCategory(category) {
-    return await recipeModel.find({ category: category });
+async function findRecipeByCategory(cuisine) {
+    return await recipeModel.find({ cuisine: cuisine });
 }
 
 async function findRecipeByServingSize(servingSize) {
