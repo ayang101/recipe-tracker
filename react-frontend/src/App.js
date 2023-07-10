@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react';
 import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
-import RecipeForm from './RecipeForm';
+import RecipeURLForm from './RecipeURLForm';
+import RecipeCustomForm from './RecipeCustomForm';
 import RecipeDetail from './RecipeDetail'
 import NavBar from './Nav';
 import Home from './Home';
@@ -93,8 +94,12 @@ function MyApp() {
               }
             />
             <Route 
-              path="/recipes/form"
-              element={<RecipeForm 
+              path="/recipes/custom"
+              element={<RecipeCustomForm 
+                         handleSubmit={updateList} />} />
+            <Route 
+              path="/recipes/import"
+              element={<RecipeURLForm 
                          handleSubmit={updateList} />} />
             <Route
               path="/recipes/:id"
