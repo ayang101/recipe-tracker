@@ -102,6 +102,17 @@ async function addRecipe(recipe) {
   }
 }
 
+async function getRecipeObject(recipe) {
+  try {
+    const recipeToAdd = new recipeModel(recipe);
+    console.log('recipe to add: ' + recipeToAdd);
+    return recipeToAdd;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
 async function findAndUpdate(id, image, rating, course, cuisine,
   servingSize, prepTime, cookTime, totalTime, description, instructions,
   ingredients) {
@@ -213,6 +224,7 @@ async function deleteIngredient(recipeId, ingrId) {
 
 exports.findRecipeById = findRecipeById;
 exports.addRecipe = addRecipe;
+exports.getRecipeObject = getRecipeObject;
 exports.findAndUpdate = findAndUpdate;
 exports.findRecipeByName = findRecipeByName;
 exports.findRecipeBySource = findRecipeBySource;
