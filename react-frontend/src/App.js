@@ -12,7 +12,7 @@ import axios from 'axios';
 
 function MyApp() { 
   const [recipes, setRecipes] = useState([]);
-  const [details, setDetails] = useState([]);
+  const [currRecipe, setCurrRecipe] = useState(null);
 
   useEffect(() => {
     fetchAll().then( result => {
@@ -46,6 +46,19 @@ function MyApp() {
     try {
       const response = await axios.get('http://localhost:5000/recipes');
       return response.data.recipes_list;
+    }
+    catch (error) {
+      // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
+
+  async function fetchURLdata(url){
+    try {
+      const response = await axios.get('http://localhost:5000/recipes/custom/' + url);
+      setCurrRecipe(response.data);
+      return response.data;
     }
     catch (error) {
       // we're not handling errors. Just logging into the console
@@ -90,12 +103,14 @@ function MyApp() {
                 <RecipeTable
                   recipeData={recipes}
                   removeRecipe={removeOneRecipe}
+                  currRecipe={currRecipe}
                 />
               }
             />
             <Route 
               path="/recipes/custom"
-              element={<RecipeCustomForm 
+              element={<RecipeCustomForm
+                         handleSubmitURL={fetchURLdata}
                          handleSubmit={updateList} />} />
             <Route 
               path="/recipes/import"
