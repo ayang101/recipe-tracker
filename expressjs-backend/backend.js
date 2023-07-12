@@ -69,6 +69,32 @@ app.get("/", (req, res) => {
     return false;
   }
 }
+
+app.get("/recipes/custom/:url", async (req, res) => {
+  var source = req.params["url"];
+
+  // reference:
+  // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
+  const execSync = require("child_process").execSync;
+  const result = execSync("python scrape.py " + source);
+  console.log('result: ' + result);
+
+  var dataToSend;
+  dataToSend = result.toString();
+  // replace single quote with double quote
+  dataToSend = dataToSend.replace(/'/g, '"');
+  dataToSend = dataToSend.replace('None', '""');
+  recipe_obj = JSON.parse(dataToSend);
+  // usage found in:
+  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
+  recipe_obj.source = decodeURIComponent(recipe_obj.source);
+  recipe_obj.image = decodeURIComponent(recipe_obj.image);
+  recipe_obj.description = decodeURIComponent(recipe_obj.description);
+
+  const savedRecipe = await recipeServices.getRecipeObject(recipe_obj);
+  if (savedRecipe) res.send(savedRecipe);
+  else res.status(500).end();
+ });
  
  app.post("/recipes", async (req, res) => {
   var recipe = req.body;
@@ -93,7 +119,7 @@ app.get("/", (req, res) => {
 
   const savedRecipe = await recipeServices.addRecipe(recipe_obj);
   if (savedRecipe) res.status(201).send(savedRecipe);
-  else res.status(500).end();
+  else res.status(404).end();
  });
 
 // ingredients
