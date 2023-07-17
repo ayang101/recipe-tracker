@@ -23,14 +23,14 @@ function RecipeTableBody(props) {
         <tr key={index}>
           <td>
             <Link to={`/recipes/${row._id}` }>
-              {row.name}
+              {row.name || '--'}
             </Link>
           </td>
-          <td>{row.image}</td>
-          <td>{row.rating}</td>          
-          <td>{row.course}</td>
-          <td>{row.cuisine}</td>
-          <td>{row.totalTime}</td>
+          <td><img src={row.image || '--'} alt="" width="25%"/></td>
+          <td>{row.rating || '--'}</td>          
+          <td>{row.course  || '--'}</td>
+          <td>{row.cuisine || '--'}</td>
+          <td>{row.totalTime || '--'}</td>
           <td>
             <button onClick={() => props.removeRecipe(index)}>Delete</button>
           </td>
