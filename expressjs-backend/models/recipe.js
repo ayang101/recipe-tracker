@@ -10,7 +10,7 @@ const RecipeSchema = new mongoose.Schema(
     },
     source: {
       type: String,
-      required: true,
+      required: false,
       trim: true,
       // need to validate url
     },

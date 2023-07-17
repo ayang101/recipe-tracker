@@ -68,8 +68,16 @@ function MyApp() {
   }
 
   async function makePostCall(recipe){
+    let isValidURL;
     try {
-      const response = await axios.post('http://localhost:5000/recipes', recipe);
+      // check if string is a valid URL
+      let url = new URL(recipe.source);
+      isValidURL = true;
+    } catch (error) {
+      isValidURL = false
+    }
+    try {
+      const response = await axios.post('http://localhost:5000/recipes', [recipe, isValidURL]);
       return response;
     }
     catch (error) {
