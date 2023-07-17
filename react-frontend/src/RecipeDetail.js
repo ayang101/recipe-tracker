@@ -10,14 +10,14 @@ function RecipeDetail(props) {
         <div>
             <h1>{currRecipe.name}</h1>
             <p>Source:
-                <a href= {currRecipe.source} target="_blank">
+                <a href= {currRecipe.source} target="_blank" rel="noopener noreferrer">
                     {currRecipe.source}
                 </a>
             </p>
             <p>Image:</p>
-            <p><a href= {currRecipe.source} target="_blank">
+            <p><a href= {currRecipe.source} target="_blank" rel="noopener noreferrer">
                 <img src={currRecipe.image} 
-                    alt="Photo of recipe"
+                    alt=''
                     width="50%"/>
             </a></p>
             <p>Rating: {currRecipe.rating}</p>

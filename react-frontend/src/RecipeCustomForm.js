@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import Modal from 'react-modal';
-import { useRef } from 'react';
 import './App.css';
 
 Modal.setAppElement('#root');

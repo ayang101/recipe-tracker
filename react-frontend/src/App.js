@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { BrowserRouter, Link, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
 import RecipeURLForm from './RecipeURLForm';
 import RecipeCustomForm from './RecipeCustomForm';
@@ -72,6 +72,7 @@ function MyApp() {
     try {
       // check if string is a valid URL
       let url = new URL(recipe.source);
+      console.log('url: ' + url);
       isValidURL = true;
     } catch (error) {
       isValidURL = false
