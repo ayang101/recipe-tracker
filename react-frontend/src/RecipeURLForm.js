@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 
 function RecipeURLForm(props) {
+    const [isValidURL, setIsValidURL] = useState(true);
     const [recipe, setRecipe] = useState(
         {
             name: "",
@@ -59,6 +60,9 @@ function RecipeURLForm(props) {
             ingredient_list: [],
             instructions: []
         });
+        if (!recipe.name) {
+            setIsValidURL(false);
+        }
     }
 
     return (
@@ -70,6 +74,7 @@ function RecipeURLForm(props) {
                 id="source"
                 value={recipe.source}
                 onChange={handleChange} />
+            {!isValidURL && <p className='error-field'>Recipe URL must be a valid URL.</p>}
             <input type="button" value= "Submit" onClick={submitForm} />
         </form>
     );
