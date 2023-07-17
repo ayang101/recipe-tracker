@@ -97,27 +97,31 @@ app.get("/recipes/custom/:url", async (req, res) => {
  });
  
  app.post("/recipes", async (req, res) => {
-  var recipe = req.body;
+  var recipe = req.body[0];
+  var extractURLData = req.body[1];
 
-  // reference:
-  // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
-  const execSync = require("child_process").execSync;
-  const result = execSync("python scrape.py " + recipe.source);
-  console.log('result: ' + result);
+  if (extractURLData === true) {
+    // reference:
+    // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
+    const execSync = require("child_process").execSync;
+    const result = execSync("python scrape.py " + recipe.source);
+    console.log('result: ' + result);
 
-  var dataToSend;
-  dataToSend = result.toString();
-  // replace single quote with double quote
-  dataToSend = dataToSend.replace(/'/g, '"');
-  dataToSend = dataToSend.replace('None', '""');
-  recipe_obj = JSON.parse(dataToSend);
-  // usage found in:
-  // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
-  recipe_obj.source = decodeURIComponent(recipe_obj.source);
-  recipe_obj.image = decodeURIComponent(recipe_obj.image);
-  recipe_obj.description = decodeURIComponent(recipe_obj.description);
+    var dataToSend;
+    dataToSend = result.toString();
+    // replace single quote with double quote
+    dataToSend = dataToSend.replace(/'/g, '"');
+    dataToSend = dataToSend.replace('None', '""');
+    recipe_obj = JSON.parse(dataToSend);
+    // usage found in:
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
+    recipe_obj.source = decodeURIComponent(recipe_obj.source);
+    recipe_obj.image = decodeURIComponent(recipe_obj.image);
+    recipe_obj.description = decodeURIComponent(recipe_obj.description);
+    recipe = recipe_obj;
+  }
 
-  const savedRecipe = await recipeServices.addRecipe(recipe_obj);
+  const savedRecipe = await recipeServices.addRecipe(recipe);
   if (savedRecipe) res.status(201).send(savedRecipe);
   else res.status(404).end();
  });
