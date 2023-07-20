@@ -2,18 +2,37 @@
     color: red;
 }
 
-.recipe-table {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+#table, .search-bar{
+    display: table;
 }
 
-.box {
-    text-align: left;
+.tr {
+    display: inline-grid;
     border: black ridge 1px;
-    border-radius:  10px;
     margin: 3px;
-    width: 50rem;
-    padding-left: 10px;
+    width: 20rem;
+    table-layout: fixed;
+}
+
+.td {
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    word-wrap: break-word;
+}
+
+.td image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    width: 50%;
+}
+
+.text {
+    padding: 0px 5px 0px;
+    text-align: left;
+}
+
+.name {
+    color: black;
+    font-weight: bold;
 }

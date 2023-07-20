@@ -1,33 +1,19 @@
 import React from 'react'
 import { Link } from "react-router-dom";
 import {useState} from 'react';
+import StarRatings from 'react-star-ratings'
 import './App.css';
 
-
-function RecipeTableHeader()  {
-    return (
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Image</th>
-          <th>Rating</th>
-          <th>Course</th>
-          <th>Category</th>
-          <th>Total Time</th>
-        </tr>
-      </thead>
-    );
-}
 
 function RecipeTableBody(props) {
   const [query, setQuery] = useState("");
     return (
       <>
-      <div>
+      <div className='search-bar'>
           <input placeholder='Enter query'
                  onChange={event => setQuery(event.target.value)} />
       </div>
-      <tbody>
+      <div id='table'>
       {
         props.recipeData.filter(row => {
           if (query === '') {
@@ -37,37 +23,48 @@ function RecipeTableBody(props) {
           }
           return false;
         }).map((row, index) => (
-          <div className='box'>
-            <tr key={index}>
-              <td>
-                <Link to={`/recipes/${row._id}` }>
-                  {row.name || '--'}
-                </Link>
-              </td>
-              <td><img src={row.image || '--'} alt="" width="25%"/></td>
-              <td>{row.rating || '--'}</td>          
-              <td>{row.course  || '--'}</td>
-              <td>{row.cuisine || '--'}</td>
-              <td>{row.totalTime || '--'}</td>
-              <td>
+          <div className='tr' key={index}>
+            <Link to={`/recipes/${row._id}` }>
+              <img src={row.image || '--'}
+                    alt="Visual Representation of Recipe"
+                    style={{objectFit: 'cover',
+                            margin: 0,
+                            width: 100 + '%'}} />
+              <div className='text'>
+                <div className='td name'>
+                    {row.name || '--'}
+                </div>
+                <div className='td rating'>
+                  <StarRatings
+                    rating={row.rating || 0}
+                    starDimension='25px'
+                    starSpacing='2px'
+                  />
+                </div>
+                <div className='td'>
+                  {row.course  || '--'}
+                  {row.cuisine || '--'}
+                </div>
+                <div className='td'>{row.totalTime || '--'}</div>
+              </div>
+              <div className='td'>
                 <button onClick={() => props.removeRecipe(index)}>Delete</button>
-              </td>
-            </tr>
+              </div>
+            </Link>
           </div>
         ))
       }
-      </tbody>
+      </div>
       </>
     );
 }
 
 function RecipeTable(props) {
     return (
-      <table className='recipe-table'>
-        <RecipeTableHeader />
+      <div>
         <RecipeTableBody recipeData={props.recipeData}
                           removeRecipe={props.removeRecipe} />
-      </table>
+      </div>
     );
 }
 
