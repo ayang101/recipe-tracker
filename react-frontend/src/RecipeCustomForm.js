@@ -19,6 +19,7 @@ function RecipeURLForm(props) {
         {
             name: "",
             source: "",
+            author: "",
             image: "",
             rating: "",
             course: "",
@@ -81,6 +82,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: value,
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -97,6 +99,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: value,
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -113,6 +116,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: value,
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -129,6 +133,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: value,
                  course: recipe['course'],
@@ -145,6 +150,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: value,
@@ -161,6 +167,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -177,6 +184,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -193,6 +201,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -209,6 +218,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -225,6 +235,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -241,6 +252,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -257,6 +269,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -273,6 +286,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: recipe['source'],
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -337,6 +351,7 @@ function RecipeURLForm(props) {
         setRecipe({
             name: "",
             source: "",
+            author: "",
             image: "",
             rating: "",
             course: "",
@@ -387,12 +402,12 @@ function RecipeURLForm(props) {
                 onChange={handleChange} />
             {!nameFilled && <p className='error-field'>Name cannot be empty.</p>}
 
-            <label htmlFor="source">Author</label>
+            <label htmlFor="author">Author</label>
             <input
                 type="text"
-                name="source"
-                id="source"
-                value={recipe.source || ''}
+                name="author"
+                id="author"
+                value={recipe.author || ''}
                 onChange={handleChange} />
 
             <label htmlFor="image">Image</label>
