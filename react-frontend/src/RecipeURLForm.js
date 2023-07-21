@@ -6,6 +6,7 @@ function RecipeURLForm(props) {
         {
             name: "",
             source: "",
+            author: "",
             image: "",
             rating: "",
             course: "",
@@ -27,6 +28,7 @@ function RecipeURLForm(props) {
             setRecipe(
                 {name: recipe['name'],
                  source: value,
+                 author: recipe['author'],
                  image: recipe['image'],
                  rating: recipe['rating'],
                  course: recipe['course'],
@@ -47,6 +49,7 @@ function RecipeURLForm(props) {
         setRecipe({
             name: "",
             source: "",
+            author: "",
             image: "",
             rating: "",
             course: "",
