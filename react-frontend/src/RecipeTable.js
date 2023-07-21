@@ -2,16 +2,32 @@ import React from 'react'
 import { Link } from "react-router-dom";
 import {useState} from 'react';
 import StarRatings from 'react-star-ratings'
+import Select from 'react-select'
 import './App.css';
 
 
 function RecipeTableBody(props) {
   const [query, setQuery] = useState("");
+  const [sortType, setSortType] = useState("");
+  const options = [
+    { value: 'recent', label: 'Recent' },
+    { value: 'name', label: 'Name' },
+    { value: 'rating', label: 'Rating' }
+  ];
     return (
       <>
-      <div className='search-bar'>
+      <div className='controls'>
           <input placeholder='Enter query'
                  onChange={event => setQuery(event.target.value)} />
+          <Select styles={{
+                    control: (baseStyles, state) => ({
+                      ...baseStyles,
+                      width: 200,
+                      float: 'right',
+                      position: 'static'
+                    }),
+                  }}
+                  options={options} />
       </div>
       <div id='table'>
       {
@@ -41,16 +57,14 @@ function RecipeTableBody(props) {
                     starSpacing='2px'
                   />
                 </div>
-                <div className='td'>
-                  {row.course  || '--'}
-                  {row.cuisine || '--'}
-                </div>
-                <div className='td'>{row.totalTime || '--'}</div>
-              </div>
-              <div className='td'>
-                <button onClick={() => props.removeRecipe(index)}>Delete</button>
+                {console.log(row.author)}
+                <div className='td total-time'>{row.totalTime || '--'}</div>
+                <div className='td author'>{row.author || '--'}</div>
               </div>
             </Link>
+            <div className='td'>
+              <button onClick={() => props.removeRecipe(index)}>Delete</button>
+            </div>
           </div>
         ))
       }

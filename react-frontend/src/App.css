@@ -2,7 +2,7 @@
     color: red;
 }
 
-#table, .search-bar{
+#table, .controls{
     display: table;
 }
 
@@ -32,7 +32,10 @@
     text-align: left;
 }
 
-.name {
+.td {
     color: black;
+}
+
+.name {
     font-weight: bold;
 }
