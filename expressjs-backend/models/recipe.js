@@ -11,8 +11,12 @@ const RecipeSchema = new mongoose.Schema(
     source: {
       type: String,
       required: false,
-      trim: true,
-      // need to validate url
+      trim: true
+    },
+    author: {
+      type: String,
+      required: false,
+      trim: true
     },
     image: {
       type: String,
