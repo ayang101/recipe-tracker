@@ -58,9 +58,9 @@ function RecipeDetail(props) {
             </div>
             <ul className='recipe-ingr-header'>
                 <li>Ingredients:</li>
-                <div className='scale-convert'>
+                {/*<div className='scale-convert'>
                     <li>Scale or Convert</li>
-                </div>
+                </div>*/}
             </ul>
             <table>
                 {savedRecipe.current.ingredients?.map((element, index) => {
