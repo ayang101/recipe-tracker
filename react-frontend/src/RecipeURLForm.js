@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import './App.css';
 
 function RecipeURLForm(props) {
     const [isValidURL, setIsValidURL] = useState(true);
@@ -69,7 +70,7 @@ function RecipeURLForm(props) {
     }
 
     return (
-        <form>
+        <form className='recipe-form'>
             <label htmlFor="source">Source</label>
             <input
                 type="text"

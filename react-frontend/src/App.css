@@ -1,8 +1,30 @@
+/* left nav bar */
+.nav {
+    height: 100%;
+    width: 205px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #dcddde;
+    overflow-x: hidden;
+    padding-top: 20px;
+    padding-left: 20px;
+    
+    margin-right: auto;    
+    margin-left: auto;    
+    max-width: 100%;    
+    min-width: 100px;
+}
+
+/* error message */
 .error-field {
     color: red;
 }
 
+/* recipes table*/
 #table, .controls{
+    padding-left: 80px;
     display: table;
 }
 
@@ -38,4 +60,64 @@
 
 .name {
     font-weight: bold;
+}
+
+/* recipe details */
+.recipe-form, .recipe-detail {
+    padding-left: 80px;
+}
+
+.recipe-image .btn-container {
+    margin: 0;
+    position: absolute;
+    top: 36%;
+    left: 55%;
+    text-align: center;
+    display: flex;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.image .btn-container button {
+    width: 300px;
+}
+
+.recipe-author, .recipe-source {
+    text-align: right;
+    margin-top: 10px;
+}
+
+.recipe-name h1{
+    text-align: center;
+}
+
+.recipe-type {
+    margin-left: 425px;
+}
+
+.recipe-type li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+.recipe-times {
+    margin-left: 85px;
+}
+
+.recipe-times td{
+    text-align: center;
+}
+
+.recipe-desc {
+    text-align: center;
+    margin-left: 125px;
+    margin-right: 60px;
+}
+
+.recipe-ingr-header li{
+    display: inline-block;
+}
+
+.recipe-ingr-header .scale-convert {
+    text-align: right;
 }
