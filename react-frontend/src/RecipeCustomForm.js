@@ -14,7 +14,6 @@ function RecipeURLForm(props) {
     const [cIsValid, setCIsValid] = useState(true);
     const [aIsValid, setAIsValid] = useState(true);
 
-    // add more fields here?
     const [recipe, setRecipe] = useState(
         {
             name: "",
@@ -391,7 +390,7 @@ function RecipeURLForm(props) {
             </Modal> 
         </div>
         */}
-        <form>
+        <form className='recipe-form'>
             <h4>Customize your own recipe below</h4>
             <label htmlFor="name">Name</label>
             <input
