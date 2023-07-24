@@ -10,16 +10,19 @@ function RecipeTableBody(props) {
   const [query, setQuery] = useState("");
   const [sortType, setSortType] = useState("");
   const options = [
-    { value: 'recent', label: 'Recent' },
-    { value: 'name', label: 'Name' },
-    { value: 'rating', label: 'Rating' }
+    { value: 'name', label: 'Name (a-z)' },
+    { value: 'rating_a', label: 'Rating (ascend)' },
+    { value: 'rating_d', label: 'Rating (descend)' },
+    { value: 'totalTime_a', label: 'Total Time (ascend)' },
+    { value: 'totalTime_d', label: 'Total Time (descend)' }
   ];
     return (
       <>
       <div className='controls'>
           <input placeholder='Enter query'
                  onChange={event => setQuery(event.target.value)} />
-          <Select styles={{
+          <Select onChange={event =>setSortType(event.value)}
+                  styles={{
                     control: (baseStyles, state) => ({
                       ...baseStyles,
                       width: 200,
@@ -38,7 +41,65 @@ function RecipeTableBody(props) {
             return row;
           }
           return false;
-        }).map((row, index) => (
+        }).sort((a, b) =>
+          {
+            if (sortType.includes('totalTime')) {
+              var temp = sortType.split('_');
+              var a_time = 0;
+              var b_time = 0;
+              var temp_a = a[temp[0]].split(' ');
+              var temp_b = b[temp[0]].split(' ');
+
+              // extract times for a
+              for (var i=0; i<temp_a.length; i++) {
+                if (temp_a[i].includes('minute')) {
+                  a_time += parseInt(temp_a[i - 1]) * 0.01;
+                }
+                if (temp_a[i].includes('hour')) {
+                  a_time += parseInt(temp_a[i - 1]);
+                }
+              }
+
+              // extract times for b
+              for (var j=0; j<temp_b.length; j++) {
+                if (temp_b[j].includes('minute')) {
+                  b_time += parseInt(temp_b[j - 1]) * 0.01;
+                }
+                if (temp_b[j].includes('hour')) {
+                  b_time += parseInt(temp_b[j - 1]);
+                }
+              }
+              if (sortType === 'totalTime_a') {
+                if (b_time > a_time) {
+                  return -1;
+                }
+                return 1;
+              } else {
+                if (b_time > a_time) {
+                  return 1;
+                }
+                return -1;
+              }
+            } else if (sortType.includes('rating')) {
+              if (sortType === 'rating_a') {
+                if (b[sortType] > a[sortType]) {
+                  return -1;
+                }
+                return 1;
+              } else {
+                if (b[sortType] > a[sortType]) {
+                  return 1;
+                }
+                return -1;
+              }
+            } else {
+              if (b[sortType] > a[sortType]) {
+                return -1;
+              }
+              return 1;
+            }
+          }
+        ).map((row, index) => (
           <div className='tr' key={index}>
             <Link to={`/recipes/${row._id}` }>
               <img src={row.image || '--'}
@@ -57,7 +118,6 @@ function RecipeTableBody(props) {
                     starSpacing='2px'
                   />
                 </div>
-                {console.log(row.author)}
                 <div className='td total-time'>{row.totalTime || '--'}</div>
                 <div className='td author'>{row.author || '--'}</div>
               </div>
