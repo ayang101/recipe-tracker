@@ -104,7 +104,7 @@
     margin-left: 85px;
 }
 
-.recipe-times td{
+.recipe-times td {
     text-align: center;
 }
 
@@ -114,9 +114,15 @@
     margin-right: 60px;
 }
 
-.recipe-ingr-header li{
+.recipe-ingr-header, .recipe-instr-header {
+    margin-left: 25px;
+}
+
+{/*
+.recipe-ingr-header li {
     display: inline-block;
 }
+*/}
 
 .recipe-ingr-header .scale-convert {
     text-align: right;

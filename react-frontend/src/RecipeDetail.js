@@ -33,9 +33,9 @@ function RecipeDetail(props) {
                 <h1>{savedRecipe.current.name}</h1>
             </div>
             <ul className='recipe-type'>
-                <li>{savedRecipe.current.course}</li>
-                <li>{savedRecipe.current.cuisine}</li>
-                <li>{savedRecipe.current.rating}/10</li>
+                <li>{savedRecipe.current.course || '--'}</li>
+                <li>{savedRecipe.current.cuisine || '--'}</li>
+                <li>{savedRecipe.current.rating || '--'}/10</li>
             </ul>
             <table className='recipe-times'>
                 <tr>
@@ -46,22 +46,25 @@ function RecipeDetail(props) {
                     <td>Total Time:</td>
                 </tr>
                 <tr>
-                    <td>{savedRecipe.current.servingSize}</td>
-                    <td>{savedRecipe.current.prepTime}</td>
-                    <td>{savedRecipe.current.cookTime}</td>
-                    <td>{savedRecipe.current.additionalTime}</td>
-                    <td>{savedRecipe.current.totalTime}</td>
+                    <td>{savedRecipe.current.servingSize || '--'}</td>
+                    <td>{savedRecipe.current.prepTime || '--'}</td>
+                    <td>{savedRecipe.current.cookTime || '--'}</td>
+                    <td>{savedRecipe.current.additionalTime || '--'}</td>
+                    <td>{savedRecipe.current.totalTime || '--'}</td>
                 </tr>
             </table>
             <div className='recipe-desc'>
                 <p>{savedRecipe.current.description}</p>
             </div>
+            {/*
             <ul className='recipe-ingr-header'>
                 <li>Ingredients:</li>
-                {/*<div className='scale-convert'>
+                <div className='scale-convert'>
                     <li>Scale or Convert</li>
-                </div>*/}
+                </div>
             </ul>
+            */}
+            <p className='recipe-ingr-header'>Ingredients:</p>
             <table>
                 {savedRecipe.current.ingredients?.map((element, index) => {
                     return(
@@ -71,7 +74,7 @@ function RecipeDetail(props) {
                     );
                 })}
             </table>
-            <p>Instructions:</p>
+            <p className='recipe-instr-header'>Instructions:</p>
             <table>
                 <ol>
                     {savedRecipe.current.instructions?.map((element, index) => {
