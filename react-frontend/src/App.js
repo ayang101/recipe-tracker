@@ -1,10 +1,9 @@
 import React, {useState, useEffect} from 'react';
-import { BrowserRouter, Link, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
-import RecipeForm from './RecipeForm';
-import RecipeDetail from './RecipeDetail';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
+import RecipeURLForm from './RecipeURLForm';
+import RecipeCustomForm from './RecipeCustomForm';
+import RecipeDetail from './RecipeDetail'
 import NavBar from './Nav';
 import Home from './Home';
 import ErrorPage from './ErrorPage';
@@ -13,7 +12,7 @@ import axios from 'axios';
 
 function MyApp() { 
   const [recipes, setRecipes] = useState([]);
-  const [details, setDetails] = useState([]);
+  const [currRecipe, setCurrRecipe] = useState(null);
   const [users, setUsers] = useState([]);
   const [currUser, setCurrUser] = useState(null);
   const [authenticated, setAuthenticated] = useState(null);
@@ -98,9 +97,31 @@ function MyApp() {
     }
   }
 
-  async function makePostCall(recipe){
+  async function fetchURLdata(url){
     try {
-      const response = await axios.post('http://localhost:5000/recipes', recipe);
+      const response = await axios.get('http://localhost:5000/recipes/custom/' + url);
+      setCurrRecipe(response.data);
+      return response.data;
+    }
+    catch (error) {
+      // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
+
+  async function makePostCall(recipe){
+    let isValidURL;
+    try {
+      // check if string is a valid URL
+      let url = new URL(recipe.source);
+      console.log('url: ' + url);
+      isValidURL = true;
+    } catch (error) {
+      isValidURL = false
+    }
+    try {
+      const response = await axios.post('http://localhost:5000/recipes', [recipe, isValidURL]);
       return response;
     }
     catch (error) {
@@ -134,12 +155,18 @@ function MyApp() {
                 <RecipeTable
                   recipeData={recipes}
                   removeRecipe={removeOneRecipe}
+                  currRecipe={currRecipe}
                 />
               }
             />
             <Route 
-              path="/recipes/form"
-              element={<RecipeForm 
+              path="/recipes/custom"
+              element={<RecipeCustomForm
+                         handleSubmitURL={fetchURLdata}
+                         handleSubmit={updateList} />} />
+            <Route 
+              path="/recipes/import"
+              element={<RecipeURLForm 
                          handleSubmit={updateList} />} />
             <Route
               path="/recipes/:id"

@@ -10,9 +10,13 @@ const RecipeSchema = new mongoose.Schema(
     },
     source: {
       type: String,
-      required: true,
-      trim: true,
-      // need to validate url
+      required: false,
+      trim: true
+    },
+    author: {
+      type: String,
+      required: false,
+      trim: true
     },
     image: {
       type: String,
@@ -30,7 +34,7 @@ const RecipeSchema = new mongoose.Schema(
         required: false,
         trim: true
     },
-    category: {
+    cuisine: {
         type: String,
         required: false,
         trim: true
@@ -41,17 +45,22 @@ const RecipeSchema = new mongoose.Schema(
         trim: true
     },
     prepTime: {
-        type: Number,
+        type: String,
         required: false,
         trim: true
     },
     cookTime: {
-        type: Number,
+        type: String,
         required: false,
         trim: true
     },
+    additionalTime: {
+      type: String,
+      required: false,
+      trim: true
+    },
     totalTime: {
-        type: Number,
+        type: String,
         required: false,
         trim: true
     },
@@ -61,12 +70,12 @@ const RecipeSchema = new mongoose.Schema(
         trim: true
     },
     instructions: {
-        type: String,
+        type: Array,
         required: false,
         trim: true
     },
     ingredients: {
-      type: String,
+      type: Array,
       required: false,
       trim: true
     },

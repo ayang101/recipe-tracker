@@ -53,7 +53,7 @@ app.post("/login/:username/:password", async (req, res) => {
  app.get("/recipes", async (req, res) => {
    const name = req.query["name"];
    const course = req.query["course"];
-   const category = req.query["category"];
+   const cuisine = req.query["cuisine"];
    const totalTime = req.query["totalTime"];
    const ingredients = req.query["ingredients"];
    try {
@@ -63,7 +63,7 @@ app.post("/login/:username/:password", async (req, res) => {
       undefined,
       undefined,
       course,
-      category,
+      cuisine,
       undefined,
       undefined,
       undefined,
@@ -104,14 +104,14 @@ app.post("/login/:username/:password", async (req, res) => {
     return false;
   }
 }
- 
- app.post("/recipes", async (req, res) => {
-  var recipe = req.body;
+
+app.get("/recipes/custom/:url", async (req, res) => {
+  var source = req.params["url"];
 
   // reference:
   // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
   const execSync = require("child_process").execSync;
-  const result = execSync("python scrape.py " + recipe.source);
+  const result = execSync("python scrape.py " + source);
   console.log('result: ' + result);
 
   var dataToSend;
@@ -126,28 +126,39 @@ app.post("/login/:username/:password", async (req, res) => {
   recipe_obj.image = decodeURIComponent(recipe_obj.image);
   recipe_obj.description = decodeURIComponent(recipe_obj.description);
 
-  // additional data of type ld+json
-  recipe_obj.rating = recipe_obj.rating;
-  recipe_obj.course = recipe_obj.course;
-  recipe_obj.category = recipe_obj.category;
-  recipe_obj.serving = recipe_obj.serving;
-
-  // TODO: convert prep, cook, and total time to Number
-  /*
-  if (recipe_obj.rating != undefined){
-    recipe_obj.prepTime = decodeURIComponent(recipe_obj.prepTime);
-  } if (recipe_obj.rating != undefined){
-    recipe_obj.cookTime = decodeURIComponent(recipe_obj.cookTime);
-  } if (recipe_obj.rating != undefined){
-    recipe_obj.totalTime = decodeURIComponent(recipe_obj.totalTime);
-  }
-  */
-  recipe_obj.ingredients = recipe_obj.ingredients;
-  recipe_obj.instructions = recipe_obj.instructions;
-
-  const savedRecipe = await recipeServices.addRecipe(recipe_obj);
-  if (savedRecipe) res.status(201).send(savedRecipe);
+  const savedRecipe = await recipeServices.getRecipeObject(recipe_obj);
+  if (savedRecipe) res.send(savedRecipe);
   else res.status(500).end();
+ });
+ 
+ app.post("/recipes", async (req, res) => {
+  var recipe = req.body[0];
+  var extractURLData = req.body[1];
+
+  if (extractURLData === true) {
+    // reference:
+    // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
+    const execSync = require("child_process").execSync;
+    const result = execSync("python scrape.py " + recipe.source);
+    console.log('result: ' + result);
+
+    var dataToSend;
+    dataToSend = result.toString();
+    // replace single quote with double quote
+    dataToSend = dataToSend.replace(/'/g, '"');
+    dataToSend = dataToSend.replace('None', '""');
+    recipe_obj = JSON.parse(dataToSend);
+    // usage found in:
+    // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/decodeURI
+    recipe_obj.source = decodeURIComponent(recipe_obj.source);
+    recipe_obj.image = decodeURIComponent(recipe_obj.image);
+    recipe_obj.description = decodeURIComponent(recipe_obj.description);
+    recipe = recipe_obj;
+  }
+
+  const savedRecipe = await recipeServices.addRecipe(recipe);
+  if (savedRecipe) res.status(201).send(savedRecipe);
+  else res.status(404).end();
  });
 
 // ingredients
