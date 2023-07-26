@@ -14,6 +14,41 @@ app.get("/", (req, res) => {
    res.send("Hello World!");
  });
  
+// users
+app.post("/signup", async (req, res) => {
+  var user = req.body;
+  const savedUser = await userServices.addUser(user);
+  if (savedUser) res.status(201).send(savedUser);
+  else res.status(500).end();
+});
+
+app.get("/login", (req, res) => {
+  res.send("Hello World!");
+});
+
+/* referenced from:
+   https://www.geeksforgeeks.org/login-form-using-node-js-and-mongodb/ */
+app.post("/login/:username/:password", async (req, res) => {
+  console.log("hello");
+  try {
+    const username = req.params["username"];
+    const password = req.params["password"];
+    // check if username belongs to a user
+    console.log('username: ' + username);
+    console.log('password: ' + password);
+    const user = await userServices.verifyUser(username, password);
+    console.log('user: ' + user);
+    if (user) {
+      console.log('hello 2');
+      res.status(200);
+    } else {
+      res.status(401).send("User doesn't exist");
+    }
+  } catch (error) {
+    res.status(400).send(error);
+  }
+});
+
  // recipes
  app.get("/recipes", async (req, res) => {
    const name = req.query["name"];
