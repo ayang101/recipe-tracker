@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import './App.css';
 
 
 function LoginForm(props) {
@@ -24,7 +25,6 @@ function LoginForm(props) {
 
     function submitForm() {
         props.handleSubmit(user);
-        props.isAuthenticated = true;
         setUser({
             username: '',
             password: ''
@@ -33,7 +33,7 @@ function LoginForm(props) {
 
 
     return (
-        <form>
+        <form className='login-form'>
             <label htmlFor="username">Username</label>
             <input
                 type="text"
@@ -50,6 +50,8 @@ function LoginForm(props) {
                 id="password"
                 value={user.password}
                 onChange={handleChange} />
+            {props.isValid === false
+            && <p className='error-field'>Invalid username or password.</p>}
             <input type="button" value="Submit" onClick={submitForm} />
         </form>
     );
