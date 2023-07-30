@@ -22,6 +22,11 @@
     color: red;
 }
 
+/* recipe tracker home page */
+.home {
+    padding-left: 80px;
+}
+
 /* recipes table*/
 #table, .controls{
     padding-left: 80px;
@@ -63,7 +68,7 @@
 }
 
 /* recipe details */
-.recipe-form, .recipe-detail {
+.recipe-form, .recipe-detail, .signup-form, .login-form {
     padding-left: 80px;
 }
 
