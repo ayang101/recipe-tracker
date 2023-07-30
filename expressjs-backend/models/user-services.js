@@ -3,23 +3,23 @@ const userModel = require('./user');
 
 connectMongoDB();
 
-async function getUsers(name, username, email, recipe_list) {
+async function getUsers(name, email, username, recipe_list) {
   let result;
   if (
     name === undefined &&
+    email === undefined &&
     username === undefined &&
-    recipe_list === undefined &&
-    email === undefined
+    recipe_list === undefined
   ) {
     result = await userModel.find();
-  } else if (username && !name && !email && !recipe_list) {
-    result = await findUserByUserName(username);
-  } else if (email && !username && !name && !recipe_list) {
-    result = await findUserByEmail(email);
-  } else if (recipe_list && !username && !name && !email) {
-    result = await findUserByRecipeList(recipe_list);
-  } else {
+  } if (name && !email && !username && !password && !recipe_list) {
     result = await findUserByName(name);
+  } else if (email && !name && !username && !password && !recipe_list) {
+    result = await findUserByEmail(email);
+  } else if (username && !name && !email && !password && !recipe_list) {
+    result = await findUserByUserName(username);
+  } else {
+    result = await findUserByRecipeList(recipe_list);
   }
   return result;
 }
