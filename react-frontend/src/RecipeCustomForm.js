@@ -368,7 +368,7 @@ function RecipeURLForm(props) {
     }
 
     return (
-        <>
+        <div className='body'>
         {/*
         <div>
             <h4>Import a recipe from a website</h4>
@@ -505,7 +505,7 @@ function RecipeURLForm(props) {
                 onChange={handleChange} />
             <input type="button" value= "Submit" onClick={submitForm} />
         </form>
-        </>
+        </div>
     );
 }
 

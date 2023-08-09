@@ -64,23 +64,26 @@ function RecipeURLForm(props) {
             ingredient_list: [],
             instructions: []
         });
+        // some other condition indicates that recipe import failed
         if (!recipe.name) {
             setIsValidURL(false);
         }
     }
 
     return (
-        <form className='recipe-form'>
-            <label htmlFor="source">Source</label>
-            <input
-                type="text"
-                name="source"
-                id="source"
-                value={recipe.source}
-                onChange={handleChange} />
-            {!isValidURL && <p className='error-field'>Recipe URL must be a valid URL.</p>}
-            <input type="button" value= "Submit" onClick={submitForm} />
-        </form>
+        <div className='body'>
+            <form className='recipe-form'>
+                <label htmlFor="source">Source</label>
+                <input
+                    type="text"
+                    name="source"
+                    id="source"
+                    value={recipe.source}
+                    onChange={handleChange} />
+                {!isValidURL && <p className='error-field'>Recipe URL must be a valid URL.</p>}
+                <input type="button" value= "Submit" onClick={submitForm} />
+            </form>
+        </div>
     );
 }
 

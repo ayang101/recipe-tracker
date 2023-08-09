@@ -1,20 +1,21 @@
-/* left nav bar */
-.nav {
-    height: 100%;
-    width: 205px;
-    position: fixed;
-    z-index: 1;
+/* nav bar */
+nav {
+    width: 100%;
+    position: sticky;
     top: 0;
     left: 0;
-    background-color: #dcddde;
-    overflow-x: hidden;
-    padding-top: 20px;
-    padding-left: 20px;
-    
-    margin-right: auto;    
-    margin-left: auto;    
-    max-width: 100%;    
-    min-width: 100px;
+    height: 35px;
+}
+
+nav ul {
+    margin: 0;
+    padding: 8px;
+    background-color: white;
+}
+
+nav ul li {
+    display: inline;
+    padding-left: 35px;
 }
 
 /* error message */
@@ -24,20 +25,25 @@
 
 /* recipes table*/
 #table, .controls{
-    padding-left: 80px;
+    padding-left: 30px;
     display: table;
+}
+
+#table {
+    background: #A0C5E8;
+    padding: 10px 30px;
+    width: 88%;
 }
 
 .tr {
     display: inline-grid;
-    border: black ridge 1px;
-    margin: 3px;
-    width: 20rem;
+    border: #D9D9D9 ridge 1px;
+    width: 15.7rem;
     table-layout: fixed;
 }
 
 .td {
-    overflow: hidden; 
+    overflow: hidden;
     text-overflow: ellipsis; 
     word-wrap: break-word;
 }
@@ -63,19 +69,24 @@
 }
 
 /* recipe details */
-.recipe-form, .recipe-detail {
-    padding-left: 80px;
+.body {
+    padding-top: 30px;
 }
 
-.recipe-image .btn-container {
-    margin: 0;
-    position: absolute;
-    top: 36%;
-    left: 55%;
-    text-align: center;
-    display: flex;
-    -ms-transform: translate(-50%, -50%);
-    transform: translate(-50%, -50%);
+.search-bar {
+    width: 975px;
+}
+
+.add-btn {
+    float: right;
+}
+
+.add-btn .url, .add-btn .custom {
+    padding-inline: 5px;
+}
+
+.block {
+    display: inline;
 }
 
 .image .btn-container button {
@@ -110,8 +121,6 @@
 
 .recipe-desc {
     text-align: center;
-    margin-left: 125px;
-    margin-right: 60px;
 }
 
 .recipe-ingr-header, .recipe-instr-header {
@@ -126,4 +135,46 @@
 
 .recipe-ingr-header .scale-convert {
     text-align: right;
+}
+
+/* tabbed information */
+.right-block {
+    text-align: center;
+}
+
+.tabs {
+    width: 700px;
+    height: 450px;
+    max-height: fit-content;
+    background-color: #F8F8F8;
+}
+
+#tab1 {
+    display: block;
+}
+
+#tab2 {
+    display: none;
+}
+
+ul.tab-content {
+    display: flex;
+    align-items: center;
+    padding: 0;
+}
+
+ul.tab-content li {
+    width: 50%;
+    list-style: none;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.5s;
+}
+
+ul.tab-content li:hover {
+    background: rgb(222, 222, 222);
+}
+
+ul.tab-content li.active {
+    background: rgb(123, 200, 47);
 }
