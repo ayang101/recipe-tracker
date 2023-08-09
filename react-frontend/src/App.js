@@ -1,11 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
-import LoginForm from './LoginForm';
-import SignupForm from './SignupForm';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import RecipeTable from './RecipeTable';
 import RecipeURLForm from './RecipeURLForm';
 import RecipeCustomForm from './RecipeCustomForm';
-import RecipeDetail from './RecipeDetail'
+import RecipeDetail from './RecipeDetail';
+import LoginForm from './LoginForm';
+import SignupForm from './SignupForm';
+import Logout from './Logout';
 import NavBar from './Nav';
 import Home from './Home';
 import ErrorPage from './ErrorPage';
@@ -16,8 +17,14 @@ function MyApp() {
   const [recipes, setRecipes] = useState([]);
   const [currRecipe, setCurrRecipe] = useState(null);
   const [users, setUsers] = useState([]);
-  const [currUser, setCurrUser] = useState(null);
-  const [authenticated, setAuthenticated] = useState(null);
+
+  useEffect(() => {
+    fetchAll().then( result => {
+      if (result) {
+        setRecipes(result);
+      }
+    });
+  }, [] );
 
   function updateUserList(user) {
     makePostCallUser(user).then( result => {
@@ -40,31 +47,39 @@ function MyApp() {
 
   function authenticateUser(user) {
     authUser(user).then( result => {
-      user = result.data;
-    if (result && result.status === 201)
-      setCurrUser(user);
+      if (result && result.status === 200) {
+        console.log(result.data._id);
+        localStorage.setItem("currUID", result.data._id);
+      }
     });
   }
 
   async function authUser(user) {
     try {
-      const response = await axios.post('http://localhost:5000/login/' + user.username + '/' + user.password);
+      const response = await axios.get(
+        'http://localhost:5000/users/'
+        + user.username + '/'
+        + user.password);
+      console.log(user.username);
+      console.log(user.password);
+      console.log(response.data.recipe_list);
+      console.log(response.status);
+      if (response.status !== 200 || response.data.length === 0) {
+        console.log('hello 1');
+        localStorage.setItem("isValid", false);
+        throw new Error('Invalid username or password.');
+      } else {
+        localStorage.setItem("isValid", true);
+      }
       return response;
     }
     catch (error) {
+      localStorage.setItem("isValid", false);
       console.log(error);
       // popup alert message
       //alert(error);
-      return false;
     }
   }
-
-  useEffect(() => {
-    fetchAll().then( result => {
-      if (result)
-        setRecipes(result);
-    });
-  }, [] );
 
   function removeOneRecipe (index) {
     makeDeleteCall(index).then( result => {
@@ -90,7 +105,12 @@ function MyApp() {
   async function fetchAll(){
     try {
       const response = await axios.get('http://localhost:5000/recipes');
-      return response.data.recipes_list;
+      var temp = response.data.recipes_list.filter((recipe, i) => {
+        return recipe.user_id === localStorage.getItem("currUID");
+      });
+      console.log('temp');
+      console.log(temp);
+      return temp;
     }
     catch (error) {
       // we're not handling errors. Just logging into the console
@@ -123,7 +143,11 @@ function MyApp() {
       isValidURL = false
     }
     try {
-      const response = await axios.post('http://localhost:5000/recipes', [recipe, isValidURL]);
+      const response = await axios.post('http://localhost:5000/recipes',
+                                        [recipe,
+                                        isValidURL,
+                                        localStorage.getItem("currUID")
+                                        ]);
       return response;
     }
     catch (error) {
@@ -178,23 +202,20 @@ function MyApp() {
                 />
               }
             />
+            {console.log(localStorage.getItem("isValid"))}
             <Route
               path="/login"
-              element={<LoginForm
+              element={localStorage.getItem("isValid") === true ? <Navigate to="/recipes" /> : 
+                       <LoginForm
                          handleSubmit={authenticateUser}
-                         isAuthenticated={authenticated} />} />
-            <Route
-              path="/login/:username"
-              element={
-                <Home />
-              }
-            />
+                         isValid={localStorage.getItem("isValid")} />} />
             <Route
               path="/signup"
               element={<SignupForm
                          handleSubmit={updateUserList} />} />
-            { authenticated && 
-              <Navigate to="/" /> }
+            <Route
+              path="/logout"
+              element={<Logout />} />
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>

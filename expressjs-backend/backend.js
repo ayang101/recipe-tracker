@@ -15,34 +15,50 @@ app.get("/", (req, res) => {
  });
  
 // users
-app.post("/signup", async (req, res) => {
-  var user = req.body;
+app.post("/users", async (req, res) => {
+  const user = req.body;
   const savedUser = await userServices.addUser(user);
   if (savedUser) res.status(201).send(savedUser);
   else res.status(500).end();
 });
 
-app.get("/login", (req, res) => {
-  res.send("Hello World!");
+app.get("/users", async (req, res) => {
+  try {
+    const name = req.params["name"];
+    const email = req.params["email"];
+    const username = req.params["username"];
+    const recipe_list = req.params["recipe_list"];
+    const result = await userServices.getUsers(
+      name,
+      email,
+      username,
+      recipe_list
+    );
+    console.log('result:' + result);
+    if (result) {
+      res.status(200).send({ users_list: result });
+    } else {
+      res.status(404).send("User doesn't exist");
+    }
+  } catch (error) {
+    res.status(500).send(error);
+  }
 });
 
 /* referenced from:
    https://www.geeksforgeeks.org/login-form-using-node-js-and-mongodb/ */
-app.post("/login/:username/:password", async (req, res) => {
-  console.log("hello");
+app.get("/users/:username/:password", async (req, res) => {
   try {
     const username = req.params["username"];
     const password = req.params["password"];
     // check if username belongs to a user
     console.log('username: ' + username);
     console.log('password: ' + password);
-    const user = await userServices.verifyUser(username, password);
-    console.log('user: ' + user);
-    if (user) {
-      console.log('hello 2');
-      res.status(200);
+    const result = await userServices.verifyUser(username, password);
+    if (result !== false) {
+      res.status(200).send(result);
     } else {
-      res.status(401).send("User doesn't exist");
+      res.status(404).send("User doesn't exist");
     }
   } catch (error) {
     res.status(400).send(error);
@@ -52,25 +68,39 @@ app.post("/login/:username/:password", async (req, res) => {
  // recipes
  app.get("/recipes", async (req, res) => {
    const name = req.query["name"];
+   const source = req.query["source"];
+   const author = req.query["author"];
+   const image = req.query["image"];
+   const rating = req.query["rating"];
    const course = req.query["course"];
    const cuisine = req.query["cuisine"];
+   const servingSize = req.query["servingSize"];
+   const prepTime = req.query["prepTime"];
+   const cookTime = req.query["cookTime"];
+   const additionalTime = req.query["additionalTime"];
    const totalTime = req.query["totalTime"];
+   const description = req.query["description"];
+   const instructions = req.query["instructions"];
    const ingredients = req.query["ingredients"];
+   const user_id = req.query["user_id"];
    try {
     const result = await recipeServices.getRecipes(
       name,
-      undefined,
-      undefined,
-      undefined,
+      source,
+      author,
+      image,
+      rating,
       course,
       cuisine,
-      undefined,
-      undefined,
-      undefined,
+      servingSize,
+      prepTime,
+      cookTime,
+      additionalTime,
       totalTime,
-      undefined,
-      undefined,
-      ingredients
+      description,
+      instructions,
+      ingredients,
+      user_id
     );
     res.send({ recipes_list: result });
   } catch (error) {
@@ -153,6 +183,7 @@ app.get("/recipes/custom/:url", async (req, res) => {
     recipe_obj.source = decodeURIComponent(recipe_obj.source);
     recipe_obj.image = decodeURIComponent(recipe_obj.image);
     recipe_obj.description = decodeURIComponent(recipe_obj.description);
+    recipe_obj.user_id = req.body[2];
     recipe = recipe_obj;
   }
 

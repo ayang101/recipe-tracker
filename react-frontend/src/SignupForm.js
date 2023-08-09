@@ -1,4 +1,6 @@
 import React, {useState} from 'react';
+import './App.css';
+
 
 function SignupForm(props) {
     const [user, setUser] = useState({
@@ -69,7 +71,7 @@ function SignupForm(props) {
 
 
     return (
-        <form>
+        <form className='signup-form'>
             <label htmlFor="name">Name</label>
             <input
                 type="text"

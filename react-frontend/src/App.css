@@ -23,6 +23,11 @@ nav ul li {
     color: red;
 }
 
+/* recipe tracker home page */
+.home {
+    padding-left: 80px;
+}
+
 /* recipes table*/
 #table, .controls{
     padding-left: 30px;

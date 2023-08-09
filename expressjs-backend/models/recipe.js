@@ -79,7 +79,12 @@ const RecipeSchema = new mongoose.Schema(
       required: false,
       trim: true
     },
-    ingredient_list: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }]
+    user_id: {
+      type: String,
+      required: false,
+      trim: true
+    },
+    ingredient_list: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }],
   },
   { collection: 'recipes_list' }
 );
