@@ -1,5 +1,5 @@
 const Home = () => {
-    return <h1>Recipe Tracker</h1>;
+    return <h1>Meal Quest</h1>;
 };
 
 export default Home;
