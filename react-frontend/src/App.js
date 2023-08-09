@@ -13,6 +13,49 @@ import axios from 'axios';
 function MyApp() { 
   const [recipes, setRecipes] = useState([]);
   const [currRecipe, setCurrRecipe] = useState(null);
+  const [users, setUsers] = useState([]);
+  const [currUser, setCurrUser] = useState(null);
+  const [authenticated, setAuthenticated] = useState(null);
+
+  function updateUserList(user) {
+    makePostCallUser(user).then( result => {
+      user = result.data;
+    if (result && result.status === 201)
+      setUsers([...users, user]);
+    });
+  }
+
+  async function makePostCallUser(user){
+    try {
+      const response = await axios.post('http://localhost:5000/signup', user);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  function authenticateUser(user) {
+    authUser(user).then( result => {
+      user = result.data;
+    if (result && result.status === 201)
+      setCurrUser(user);
+    });
+  }
+
+  async function authUser(user) {
+    try {
+      const response = await axios.post('http://localhost:5000/login/' + user.username + '/' + user.password);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      // popup alert message
+      //alert(error);
+      return false;
+    }
+  }
 
   useEffect(() => {
     fetchAll().then( result => {
@@ -133,6 +176,23 @@ function MyApp() {
                 />
               }
             />
+            <Route
+              path="/login"
+              element={<LoginForm
+                         handleSubmit={authenticateUser}
+                         isAuthenticated={authenticated} />} />
+            <Route
+              path="/login/:username"
+              element={
+                <Home />
+              }
+            />
+            <Route
+              path="/signup"
+              element={<SignupForm
+                         handleSubmit={updateUserList} />} />
+            { authenticated && 
+              <Navigate to="/" /> }
             <Route path="*" element={<ErrorPage />} />
           </Route>
         </Routes>
