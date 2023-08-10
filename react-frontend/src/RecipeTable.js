@@ -1,8 +1,8 @@
-import React from 'react'
+import React from 'react';
 import { Link } from "react-router-dom";
 import {useState} from 'react';
-import StarRatings from 'react-star-ratings'
-import Select from 'react-select'
+import StarRatings from 'react-star-ratings';
+import Select from 'react-select';
 import './App.css';
 
 
@@ -33,7 +33,6 @@ function RecipeTableBody(props) {
                   }}
                   options={options} />
             <div className='add-btn'>
-              <h5>+ Add Recipe</h5>
               <Link className="url" to="/recipes/import">URL</Link>
               <Link className="custom" to="/recipes/custom">Custom</Link>
             </div>

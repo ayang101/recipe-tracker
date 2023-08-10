@@ -7,9 +7,11 @@ const Layout = () => {
         <nav>
           <ul>
             <li><Link to="/">meal quest</Link></li>
-            <li><Link to="/recipes">Recipes</Link></li>
-            <li><Link to="/login">Log in</Link></li>
-            <li><Link to="/signup">Sign up</Link></li>
+            <li><Link to="/recipes">COOK</Link></li>
+            <li><Link to="/recipes">PLAN</Link></li>
+            <li><Link to="/recipes">SHOP</Link></li>
+            <li><Link to="/login">LOG IN</Link></li>
+            <li><Link to="/signup">SIGN UP</Link></li>
           </ul>
         </nav>
         <Outlet />

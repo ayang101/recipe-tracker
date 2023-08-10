@@ -73,6 +73,11 @@ nav ul li {
     font-weight: bold;
 }
 
+/* recipe form */
+.recipe-form {
+    background: #A0C5E8;
+}
+
 /* recipe details */
 .body {
     padding-top: 30px;
