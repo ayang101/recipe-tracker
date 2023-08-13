@@ -1,12 +1,35 @@
-import React from 'react'
 import { useRef, useState } from 'react';
 import { useParams } from 'react-router-dom'
 import './App.css';
 
 function RecipeDetail(props) {
+    const [isCheck, setIsCheck] = useState([]);
     const [currTab, setCurrTab] = useState("tab1");
     const savedRecipe = useRef(0);
     const recipeId = useParams().id;
+
+    // handle ingredient checkbox
+    const handleCheckAll = () => {
+        if (isCheck.length === (savedRecipe.current.ingredients).length) {
+            setIsCheck([]);
+            document.getElementById("selectAll").innerText = "Select all";
+        } else {
+            setIsCheck(Array.from({length: (savedRecipe.current.ingredients).length}, (_, n) => n));
+            document.getElementById("selectAll").innerText = "Deselect all";
+        }
+    };
+    const handleCheckOne = (event) => {
+        const id =  parseInt(event.target.id);
+        const checked = event.target.checked;
+        if (checked) {
+            // add to checked items list
+            setIsCheck([...isCheck, id]);
+        } else {
+            // remove from checked items list
+            setIsCheck((prevData) => prevData.filter(item => item !== id));
+            document.getElementById("selectAll").innerText = "Select all";
+        }
+    };
     // handle tab switching
     // by default, show ingredients tab    
     const handleTab0 = () => {
@@ -97,9 +120,16 @@ function RecipeDetail(props) {
                         </ul>
 
                         <table id='tab1'>
+                            <button id='selectAll' type='button' onClick={handleCheckAll}>Select all</button>
                             {savedRecipe.current.ingredients?.map((element, index) => {
                                 return(
                                     <tr key={index}>
+                                        <input type='checkbox'
+                                               id={index}
+                                               value={element}
+                                               checked={isCheck.includes(index)}
+                                               onChange={handleCheckOne}
+                                        />
                                         <td>{element}</td>
                                     </tr>
                                 );
@@ -120,6 +150,7 @@ function RecipeDetail(props) {
                                 })}
                             </ol>
                         </table>
+                        <h4>Result: {isCheck.toString()}</h4>
                         </div>
                     </td>
                 </tr>

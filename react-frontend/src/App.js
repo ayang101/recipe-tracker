@@ -4,6 +4,7 @@ import RecipeTable from './RecipeTable';
 import RecipeURLForm from './RecipeURLForm';
 import RecipeCustomForm from './RecipeCustomForm';
 import RecipeDetail from './RecipeDetail';
+import GroceryList from './GroceryList';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import Logout from './Logout';
@@ -202,6 +203,9 @@ function MyApp() {
                 />
               }
             />
+            <Route
+              path="/grocery-list"
+              element={<GroceryList />} />
             {console.log(localStorage.getItem("isValid"))}
             <Route
               path="/login"
