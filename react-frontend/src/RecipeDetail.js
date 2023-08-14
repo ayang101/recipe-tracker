@@ -3,7 +3,14 @@ import { useParams } from 'react-router-dom'
 import './App.css';
 
 function RecipeDetail(props) {
-    const [isCheck, setIsCheck] = useState([]);
+    const [isCheck, setIsCheck] = useState(() => {
+        // get stored value
+        const savedIndex = localStorage.getItem("savedCheck");
+        if (savedIndex !== null) {
+            return savedIndex.toString().replace(/,+/g,',');
+        }
+        return [];
+    });
     const [currTab, setCurrTab] = useState("tab1");
     const savedRecipe = useRef(0);
     const recipeId = useParams().id;
@@ -21,15 +28,29 @@ function RecipeDetail(props) {
     const handleCheckOne = (event) => {
         const id =  parseInt(event.target.id);
         const checked = event.target.checked;
+        var array = JSON.parse("[" + isCheck.toString().replace(/,+/g,',') + "]");
+        console.log('isCheck');
+        console.log(array);
         if (checked) {
             // add to checked items list
-            setIsCheck([...isCheck, id]);
+            setIsCheck([...array, id]);
         } else {
             // remove from checked items list
-            setIsCheck((prevData) => prevData.filter(item => item !== id));
+            var temp = array.filter(item => item != id).toString();
+            setIsCheck(temp.replace(/^\[(.+)\]$/,'$1').replace(/,\s*$/, ""));
             document.getElementById("selectAll").innerText = "Select all";
         }
     };
+    
+    window.onbeforeunload = (e) => {
+        localStorage.setItem("savedCheck", isCheck);
+        var ingr_array = JSON.parse("[" + isCheck.toString().replace(/,+/g,',') + "]");
+        for (var i=0; i<ingr_array.length; i++) {
+            ingr_array[i] = savedRecipe.current.ingredients[ingr_array[i]];
+        }
+        localStorage.setItem("savedIngr", ingr_array);
+    };
+
     // handle tab switching
     // by default, show ingredients tab    
     const handleTab0 = () => {
@@ -125,6 +146,7 @@ function RecipeDetail(props) {
                                 return(
                                     <tr key={index}>
                                         <input type='checkbox'
+                                               name="inputCheck"
                                                id={index}
                                                value={element}
                                                checked={isCheck.includes(index)}
