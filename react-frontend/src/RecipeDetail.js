@@ -36,7 +36,7 @@ function RecipeDetail(props) {
             setIsCheck([...array, id]);
         } else {
             // remove from checked items list
-            var temp = array.filter(item => item != id).toString();
+            var temp = array.filter(item => item !== id).toString();
             setIsCheck(temp.replace(/^\[(.+)\]$/,'$1').replace(/,\s*$/, ""));
             document.getElementById("selectAll").innerText = "Select all";
         }
