@@ -188,3 +188,23 @@ ul.tab-content li:hover {
 ul.tab-content li.active {
     background: rgb(123, 200, 47);
 }
+
+/* planner */
+.planner-table, .planner-tr, .planner-th-row, .planner-th-col, .planner-table td {
+    border: 1px solid rgb(123, 200, 47);
+    border-collapse: collapse;
+}
+
+.planner-th-row {
+    height: 150px;
+    transform: rotate(-90deg);
+}
+
+.planner-table {
+    table-layout: fixed;
+    width: 100%;
+}
+
+.planner-th-col {
+    width: 14%;
+}
