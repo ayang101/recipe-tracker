@@ -1,6 +1,6 @@
 import './App.css';
 
-const GroceryList = () => {
+function GroceryList(props) {
     return (
         <div className='grocery-list'>
             <h1>Grocery List</h1>
