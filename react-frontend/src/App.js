@@ -5,6 +5,7 @@ import RecipeURLForm from './RecipeURLForm';
 import RecipeCustomForm from './RecipeCustomForm';
 import RecipeDetail from './RecipeDetail';
 import GroceryList from './GroceryList';
+import Planner from './Planner';
 import LoginForm from './LoginForm';
 import SignupForm from './SignupForm';
 import Logout from './Logout';
@@ -206,6 +207,9 @@ function MyApp() {
             <Route
               path="/grocery-list"
               element={<GroceryList />} />
+            <Route
+              path="/planner"
+              element={<Planner />} />
             {console.log(localStorage.getItem("isValid"))}
             <Route
               path="/login"
