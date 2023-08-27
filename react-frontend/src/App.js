@@ -19,11 +19,14 @@ function MyApp() {
   const [recipes, setRecipes] = useState([]);
   const [currRecipe, setCurrRecipe] = useState(null);
   const [users, setUsers] = useState([]);
+  const [mealOutlines, setMealOutlines] = useState([]);
+  const [meals, setMeals] = useState([]);
 
   useEffect(() => {
     fetchAll().then( result => {
       if (result) {
         setRecipes(result);
+        setMeals(result);
       }
     });
   }, [] );
@@ -33,6 +36,7 @@ function MyApp() {
       user = result.data;
     if (result && result.status === 201)
       setUsers([...users, user]);
+      setMealOutlines([...mealOutlines, user.meal_plan]);
     });
   }
 
@@ -171,6 +175,66 @@ function MyApp() {
     }
   }
 
+  function updateMealOutlineMealList(meal, date) {
+    // check if the mealOutline exists for the given date
+    var mealOutlineExists = false;
+    for (var i; i < mealOutlines; i++) {
+      var temp_meal = mealOutlines[i];
+      if (temp_meal["date"] === date) {
+        mealOutlineExists = true;
+        break;
+      }
+    }
+    console.log('date:');
+    console.log(date);
+    // if the meal_outline for that date is not found
+    // create a new meal_outline
+    if (!mealOutlineExists) {
+      makePostCallMealOutline(date).then( result => {
+        var newMealOutline = result.data;
+        if (result && result.status === 201)
+          setMealOutlines([...mealOutlines, newMealOutline]);
+      });
+    }
+    // add meal to meal_list of target mealOutline
+    makePostCallMeal(date, meal).then( result => {
+      var newMeal = result.data;
+      if (result && result.status === 201)
+        setMeals([...meals, newMeal]);
+    });
+  }
+
+  async function makePostCallMealOutline(date){
+    try {
+      const new_meal_outline = (
+        {
+          date: date,
+          meal_list: []
+        }
+      );
+      const response = await axios.post('http://localhost:5000/meal-outlines', new_meal_outline);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  async function makePostCallMeal(date, meal){
+    try {
+      console.log('meal in post:');
+      console.log(meal);
+      const response = await axios.post('http://localhost:5000/meal-outlines/' + date, meal);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+
   return (
     <div className="container">
       <BrowserRouter basename="/">
@@ -208,8 +272,15 @@ function MyApp() {
               path="/grocery-list"
               element={<GroceryList />} />
             <Route
-              path="/planner"
-              element={<Planner />} />
+              path="/meal-planner"
+              element={
+                <Planner
+                  mealData={meals}
+                  mealOutlineData={mealOutlines}
+                  handleDrop={updateMealOutlineMealList}
+                />
+              }
+            />
             {console.log(localStorage.getItem("isValid"))}
             <Route
               path="/login"

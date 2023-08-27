@@ -55,6 +55,15 @@ function Planner(props) {
     const [monthView, setMonthView] = useState(currMonth);
     const [yearView, setYearView] = useState(currYear);
     const [startDate, setStartDate] = useState(getFirstDateOfWeek(yearView, monthView, currDate.getDate()));
+    const [draggedRecipe, setDraggedRecipe] = useState(null);
+    const [meal, setMeal] = useState(
+        {
+            name: "",
+            category: "",
+            recipe: null,
+            ingredient_list: []
+        }
+    );
 
     const addWeek = () => {
         var d = startDate.getDate();
@@ -125,45 +134,136 @@ function Planner(props) {
                 weekArr.push(new Date(y, m, d + i));
             }
         }
-        console.log('week array');
-        console.log(weekArr);
+        //console.log('week array');
+        //console.log(weekArr);
         return weekArr;
+    }
+
+    // handles the drag event
+    function onDrag(event, recipe) {
+        setDraggedRecipe(recipe);
+        setMeal(
+            {
+                name: recipe["name"],
+                category: "",
+                recipe: recipe
+            }
+        );
+        //console.log('meal in on drag:');
+        //console.log(meal);
+        event.preventDefault();
+    }
+
+    // handles the drag over event
+    function onDragOver(event, row, col, category) {
+        setMeal(
+            {
+                name: draggedRecipe.name,
+                category: category,
+                recipe: draggedRecipe
+            }
+        );
+        //console.log('meal in on drag over:');
+        //console.log(meal);
+        document.getElementById('cell-content-' + row + '-' + col).innerHTML = meal['name'];
+        event.preventDefault();
+    }
+
+    // handles the drag leave event
+    function onDragLeave(event, row, col) {
+        setMeal(
+            {
+                name: "",
+                category: "",
+                recipe: null
+            }
+        );
+        document.getElementById('cell-content-' + row + '-' + col).innerHTML = null;
+        event.preventDefault();
+    }
+
+    // handles the drop event
+    function onDrop(event, d, y) {
+        // update meal outline's meal list here
+        const temp_date = y + "-" + abbrMonths[d.getMonth()] + "-" + d.getDate();
+        //console.log('meal in on drop:');
+        //console.log(meal);
+        props.handleDrop(meal, temp_date);
+        event.preventDefault();
     }
 
     return (
         <div>
             <h1>My Planner</h1>
-            <h5>{yearView}</h5>
-            <button onClick={subWeek}>prev</button>
-            <button onClick={addWeek}>next</button>
-            <table className='planner-table'>
-                <tr className='planner-tr'>
-                    <th></th>
-                    {console.log("startdate:")}
-                    {console.log(startDate)}
+            <h4>{yearView}</h4>
+
+            <div>
+                <div className='ptable'>
+                    <div className='ptable-row'>
+                        {props.mealData.map((row, index) => (
+                            <div
+                                className='ptable-cell'
+                                key={row.id}
+                                draggable
+                                onDrag={event => onDrag(event, row)}>
+                                <img src={row.image || '--'}
+                                        alt={row.name}
+                                        style={{width: 150,
+                                                height: 100,
+                                                objectFit: 'cover',
+                                                position: 'center'}} />
+                                <div className='text'>
+                                    <div className='planner-subtitle'>
+                                        {row.name}
+                                    </div>
+                                </div>
+                            </div>
+                        ))
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div className='control'>
+                <button onClick={subWeek}>prev</button>
+                <button onClick={addWeek}>next</button>
+            </div>
+            <div className='ptable'>
+                <div className='ptable-row'>
+                    <div className='ptable-head'></div>
                     {getWeek().map((element, index) => {
                         return (
-                            <th className='planner-th-col' scope='col'>
+                            <div className='ptable-head'>
                                 {(abbrDays[element.getDay()] + " " + abbrMonths[element.getMonth()] + " " + element.getDate())}
-                            </th>
+                            </div>
                         );
                     })}
-                </tr>
-                {mealCategories.map((element, index) => {
+                </div>
+                
+                {mealCategories.map((category, row) => {
                     return (
-                        <tr>
-                            <th className='planner-th-row' scope='row'>{element}</th>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                            <td></td>
-                        </tr>
+                        <div className='ptable-row'>
+                            <div className='ptable-head'>{category}</div>
+                            {getWeek().map((day, col) => {
+                                return (
+                                    <div
+                                        className='ptable-cell'
+                                        key={day.id}
+                                        onDrop={event => onDrop(event, day, yearView)}
+                                        onDragOver={event => onDragOver(event, row, col, category)}
+                                        onDragLeave={event => onDragLeave(event, row, col)}>
+                                        <div id={'cell-content-' + row + '-' + col}>
+
+
+
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
                     );
                 })}
-            </table>
+            </div>
         </div>
     );
 };
