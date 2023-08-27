@@ -6,6 +6,8 @@ const cors = require('cors');
 const userServices = require('./models/user-services');
 const recipeServices = require('./models/recipe-services');
 const ingredientServices = require('./models/ingredient-services');
+const mealOutlineServices = require('./models/mealOutline-services');
+const mealServices = require('./models/meal-services');
 
 app.use(cors());
 app.use(express.json());
@@ -36,7 +38,7 @@ app.get("/users", async (req, res) => {
     );
     console.log('result:' + result);
     if (result) {
-      res.status(200).send({ users_list: result });
+      res.status(200).send({ users: result });
     } else {
       res.status(404).send("User doesn't exist");
     }
@@ -193,9 +195,9 @@ app.get("/recipes/custom/:url", async (req, res) => {
  });
 
 // ingredients
-app.post('/recipes/:id', async (req, res) => {
+app.post("/recipes/:id", async (req, res) => {
   const id = req.params['id'];
-  console.log("body of request: ", req.body)
+  console.log("body of request: ", req.body);
   const newIngredient = await ingredientServices.addIngredient(req.body);
   let recipe = await ingredientServices.findAndUpdate(id, newIngredient);
 
@@ -203,7 +205,7 @@ app.post('/recipes/:id', async (req, res) => {
   else res.status(500).end();
 });
 
-app.delete('/recipes/:recipeId/:ingredientId', async (req, res) => {
+app.delete("/recipes/:recipeId/:ingredientId", async (req, res) => {
   const recipeId = req.params['recipeId'];
   const ingredientId = req.params['ingredientId'];
 
@@ -224,12 +226,124 @@ async function deleteIngredientByRecipeAndIngredientId(recipeId, ingredientId) {
   }
 }
 
-app.get('/recipes/:recipeId/:ingredientId', async (req, res) => {
+app.get("/recipes/:recipeId/:ingredientId", async (req, res) => {
   const ingredientId = req.params['ingredientId'];
   let result = await ingredientServices.findIngredientById(ingredientId);
   if (result === undefined || result === null)
     res.status(404).send('Resource not found.');
   else {
+    res.send(result);
+  }
+});
+
+// meal outline
+app.post("/meal-outlines", async (req, res) => {
+  const meal_outline = req.body;
+  console.log('meal outline:');
+  console.log(meal_outline);
+  const savedMealOutline = await mealOutlineServices.addMealOutline(meal_outline);
+  if (savedMealOutline) res.status(201).send(savedMealOutline);
+  else res.status(500).end();
+});
+
+app.get("/meal-outlines", async (req, res) => {
+  const date = req.query["date"];
+  const meal_list = req.query["meal_list"];
+  try {
+    const result = await mealOutlineServices.getMealOutlines(date, meal_list);
+    res.send({ mealOutline_list: result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send('An error ocurred in the server.');
+  }
+});
+
+app.post("/meal-outlines/:date", async (req, res) => {
+  const date = req.params['date'];
+  console.log('req.body:');
+  console.log(req.body);
+  var meal_outline = await mealOutlineServices.findMealOutlineByDate(date);
+  var target_i;
+
+  if (!meal_outline) res.status(500).end();
+  else {
+    target_i = 0;
+    for (var i=0; i<meal_outline.length; i++) {
+      if (meal_outline[i].date === date) {
+        target_i = i;
+        break;
+      }
+    }
+  }
+  meal_outline = meal_outline[target_i];
+  const newMeal = await mealServices.addMeal(req.body);
+
+  if (!newMeal) res.status(500).end();
+  meal_outline = await mealOutlineServices.findAndUpdate(meal_outline._id, newMeal);
+
+  if (meal_outline) res.status(201).send(newMeal._id);
+  else res.status(500).end();
+});
+
+app.delete("/meal-outlines/:date", async (req, res) => {
+  const date = req.params["date"];
+  const id = await mealOutlineServices.findMealOutlineByDate(date);
+  if (deleteMealOutlineById(id)) res.status(204).end();
+  else res.status(404).send("Resource not found.");
+});
+
+async function deleteMealOutlineById(id) {
+  try {
+    if (await mealOutlineServices.deleteMealOutline(id)) return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+app.get("/meal-outlines/:date", async (req, res) => {
+  const date = req.params["date"];
+  let result = await mealOutlineServices.findMealOutlineByDate(date);
+  if (result === undefined || result === null) {
+    res.status(404).send("Resource not found.");
+  } else {
+    result = { mealOutline_list: result };
+    res.send(result);
+  }
+});
+
+// meal
+app.delete("meal-outlines/:date/:category", async (req, res) => {
+  const date = req.params['date'];
+  const meal_outline_id = await mealOutlineServices.findMealOutlineByDate(date);
+  const category = req.params['category'];
+  const meal_id = await mealServices.findMealByCategory(category);
+
+  if (deleteMealById(meal_id)) res.status(204).end();
+  else res.status(404).end();
+});
+
+async function deleteMealById(meal_id) {
+  try {
+    if (
+      (await mealServices.deleteMeal(meal_id))
+    )
+      return true;
+  } catch (error) {
+    console.log(error);
+    return false;
+  }
+}
+
+app.get("meal-outlines/:date/:category", async (req, res) => {
+  const date = req.params["date"];
+  const category = req.params["category"];
+
+  let result = await mealServices.findMealByCategory(date, category);
+  if (result === undefined || result === null) {
+    res.status(404).send("Resource not found.");
+  } else {
+    result = { meal_list: result };
     res.send(result);
   }
 });
