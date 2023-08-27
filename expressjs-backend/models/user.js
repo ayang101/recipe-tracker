@@ -33,6 +33,7 @@ const UserSchema = new mongoose.Schema(
       unique: true,
       index: true*/
     },
+    meal_plan: [{ type: Schema.Types.ObjectId, ref: 'MealOutline'}],
     recipe_list: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }]
   },
   { collection: 'users' }
