@@ -3,20 +3,23 @@ const mealModel = require('./meal');
 
 connectMongoDB();
 
-async function getMeals(name, category, recipe_id, ingredient_list) {
+async function getMeals(name, category, image, recipe_id, ingredient_list) {
   let result;
   if (
     name === undefined &&
     category === undefined &&
+    image === undefined &&
     recipe_id === undefined &&
     ingredient_list === undefined
   ) {
     result = await mealModel.find();
-  } else if (name && !category && !recipe_id && !ingredient_list) {
+  } else if (name && !category && !image && !recipe_id && !ingredient_list) {
     result = await findMealByName(name);
-  } else if (category && !name && !recipe_id && !ingredient_list) {
+  } else if (category && !name && !image && !recipe_id && !ingredient_list) {
     result = await findMealByCategory(category);
-  } else if (recipe_id && !name && !category && !ingredient_list) {
+  } else if (image && !name && !category && !recipe_id && !ingredient_list) {
+    result = await findMealByImage(image);
+  } else if (recipe_id && !name && !category && !image && !ingredient_list) {
     result = await findMealByRecipeId(recipe_id);
   } else {
     result = await findMealByIngredients(ingredient_list);
@@ -52,6 +55,10 @@ async function findMealByCategory(category) {
   return await mealModel.find({ category: category });
 }
 
+async function findMealByImage(image) {
+  return await mealModel.find({ image: image });
+}
+
 async function findMealByRecipeId(recipe_id) {
   return await mealModel.find({ recipe_id: recipe_id });
 }
@@ -68,6 +75,7 @@ exports.getMeals = getMeals;
 exports.findMealById = findMealById;
 exports.findMealByName = findMealByName;
 exports.findMealByCategory = findMealByCategory;
+exports.findMealByImage = findMealByImage;
 exports.findMealByRecipeId = findMealByRecipeId;
 exports.findMealByIngredients = findMealByIngredients;
 exports.addMeal = addMeal;

@@ -17,6 +17,12 @@ const MealSchema = new mongoose.Schema(
             required: true,
             trim: true
         },
+        image: {
+            type: String,
+            required: false,
+            trim: true,
+            // need to validate image source
+        },
         recipe: { type: Schema.Types.ObjectId, ref: 'Recipe' },
         ingredient_list: [{ type: Schema.Types.ObjectId, ref: 'Ingredient' }],
     },
