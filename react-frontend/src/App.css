@@ -218,7 +218,7 @@ ul.tab-content li.active {
 .ptable {
     display: table;
     width: 100%;
-    table-layout: fixed;
+    /*table-layout: fixed;*/
 }
 
 .ptable-row {
@@ -231,4 +231,5 @@ ul.tab-content li.active {
     padding: 3px 10px;
     vertical-align: middle;
     height: 100px;
+    /*table-layout:fixed;*/
 }

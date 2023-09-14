@@ -5,7 +5,7 @@ connectMongoDB();
 
 async function getRecipes(name, source, author, image, rating, course, cuisine,
                         servingSize, prepTime, cookTime, additionalTime, totalTime,
-                        description, instructions, ingredient_list, user_id) {
+                        description, instructions, ingredient_list) {
   let result;
   if (
     name === undefined &&
@@ -22,70 +22,64 @@ async function getRecipes(name, source, author, image, rating, course, cuisine,
     totalTime === undefined &&
     description === undefined &&
     instructions === undefined &&
-    ingredient_list === undefined &&
-    user_id === undefined
-  ) {
+    ingredient_list === undefined) {
     result = await recipeModel.find();
   } else if (name && !source && !author && !image && !rating && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-             !description && !instructions && !ingredient_lis && !user_id) {
+             !description && !instructions && !ingredient_lis) {
     result = await findRecipeByName(name);
   } else if (source && !name && !author && !image && !rating && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-             !description && !instructions && !ingredient_list && !user_id) {
+             !description && !instructions && !ingredient_list) {
     result = await findRecipeBySource(source);
   } else if (author && !name && !source && !image && !rating && !course && !cuisine &&
             !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-            !description && !instructions && !ingredient_list && !user_id) {
+            !description && !instructions && !ingredient_list) {
     result = await findRecipeByAuthor(author);
   } else if (image && !name && !source && !author && !rating && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-             !description && !instructions && !ingredient_list && !user_id) {
+             !description && !instructions && !ingredient_list) {
     result = await findRecipeByImage(image);
   } else if (rating && !name && !source && !author && !image && !course && !cuisine &&
              !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-             !description && !instructions && !ingredient_list && !user_id) {
+             !description && !instructions && !ingredient_list) {
     result = await findRecipeByRating(rating);
   } else if (course && !name && !source && !author && !image && !rating && !cuisine &&
            !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-           !description && !instructions && !ingredient_list && !user_id) {
+           !description && !instructions && !ingredient_list) {
     result = await findRecipeByCourse(course);
   } else if (cuisine && !name && !source && !author && !image && !rating && !course &&
            !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-           !description && !instructions && !ingredient_list && !user_id) {
+           !description && !instructions && !ingredient_list) {
     result = await findRecipeByCategory(cuisine);
   } else if (servingSize && !name && !source && !author && !image && !rating && !course &&
            !cuisine && !prepTime && !cookTime && !additionalTime && !totalTime &&
-           !description && !instructions && !ingredient_list && !user_id) {
+           !description && !instructions && !ingredient_list) {
     result = await findRecipeByServingSize(servingSize);
   } else if (prepTime && !name && !source && !author && !image && !rating && !course &&
            !cuisine && !servingSize && !cookTime && !additionalTime && !totalTime &&
-           !description && !instructions && !ingredient_list && !user_id) {
+           !description && !instructions && !ingredient_list) {
     result = await findRecipeByPrepTime(prepTime);
   } else if (cookTime && !name && !source && !author && !image && !rating && !course &&
            !cuisine && !servingSize && !prepTime && !additionalTime && !totalTime &&
-           !description && !instructions && !ingredient_list && !user_id) {
+           !description && !instructions && !ingredient_list) {
     result = await findRecipeByCookTime(cookTime);
   } else if (additionalTime && !name && !source && !author && !image && !rating && !course &&
             !cuisine && !servingSize && !prepTime && !cookTime && !totalTime &&
-            !description && !instructions && !ingredient_list && !user_id) {
+            !description && !instructions && !ingredient_list) {
     result = await findRecipeByAdditionalTime(additionalTime);
   } else if (totalTime && !name && !source && !author && !image && !rating && !course &&
            !cuisine && !servingSize && !prepTime && !cookTime && !additionalTime &&
-           !description && !instructions && !ingredient_list && !user_id) {
+           !description && !instructions && !ingredient_list) {
     result = await findRecipeByTotalTime(totalTime);
   } else if (description && !name && !source && !author && !image && !rating && !course &&
            !cuisine && !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-           !instructions && !ingredient_list && !user_id) {
+           !instructions && !ingredient_list) {
     result = await findRecipeByDescription(description);
   } else if (instructions && !name && !source && !author && !image && !rating && !course &&
            !cuisine && !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-           !description && !ingredient_list && !user_id) {
+           !description && !ingredient_list) {
     result = await findRecipeByInstructions(instructions);
-  } else if (user_id && !name && !source && !author && !image && !rating && !course &&
-            !cuisine && !servingSize && !prepTime && !cookTime && !additionalTime && !totalTime &&
-            !description && !ingredient_list && !instructions) {
-    result = await findRecipeByUserId(user_id);
   } else {
     result = await findRecipeByInstructions(ingredient_list);
   }
@@ -95,10 +89,7 @@ async function getRecipes(name, source, author, image, rating, course, cuisine,
 async function findRecipeById(id) {
   try {
     const recipe = await recipeModel.findById(id);
-    const query = { _id: recipe._id };
-
-    const ingredientList = await recipeModel.find(query).populate('ingredient_list');
-
+  
     return recipe;
   } catch (error) {
     console.log(error);
@@ -244,16 +235,6 @@ async function findRecipeByIngredients(ingredient_list) {
     return await recipeModel.find({ ingredient_list: ingredient_list });
 }
 
-async function findRecipeByUserId(user_id) {
-  return await recipeModel.find({ user_id: user_id });
-}
-
-/*
-async function findRecipeByUserList(user_list) {
-  return await recipeModel.find({ user_list: user_list });
-}
-*/
-
 async function deleteRecipe(id) {
   return await recipeModel.findByIdAndDelete(id);
 }
@@ -285,8 +266,6 @@ exports.findRecipeByAdditionalTime = findRecipeByAdditionalTime;
 exports.findRecipeByTotalTime = findRecipeByTotalTime;
 exports.findRecipeByDescription = findRecipeByDescription;
 exports.findRecipeByInstructions = findRecipeByInstructions;
-exports.findRecipeByUserId = findRecipeByUserId;
-//exports.findRecipeByUserList = findRecipeByUserList;
 exports.findRecipeByIngredients = findRecipeByIngredients;
 exports.getRecipes = getRecipes;
 exports.findRecipeById = findRecipeById;

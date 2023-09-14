@@ -1,6 +1,5 @@
 const connectMongoDB = require('./mongoose.db.config');
 const mealOutlineModel = require('./mealOutline');
-const mealModel = require('./meal');
 
 connectMongoDB();
 
@@ -10,7 +9,7 @@ async function getMealOutlines(date, meal_list) {
     date === undefined &&
     meal_list === undefined
   ) {
-    result = await mealModel.find();
+    result = await mealOutlineModel.find();
   } else if (date && !meal_list) {
     result = await findMealOutlineByDate(date);
   } else {

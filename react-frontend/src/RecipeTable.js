@@ -39,7 +39,7 @@ function RecipeTableBody(props) {
         </div>
         <div id='table'>
         {
-          props.recipeData.filter(row => {
+          JSON.parse(props.recipeData).filter(row => {
             if (query === '') {
               return row;
             } else if (row.name.toLowerCase().includes(query.toLowerCase())) {

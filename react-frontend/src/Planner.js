@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Modal from 'react-modal';
 import './App.css';
 
 const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -55,15 +56,81 @@ function Planner(props) {
     const [monthView, setMonthView] = useState(currMonth);
     const [yearView, setYearView] = useState(currYear);
     const [startDate, setStartDate] = useState(getFirstDateOfWeek(yearView, monthView, currDate.getDate()));
-    const [draggedRecipe, setDraggedRecipe] = useState(null);
-    const [meal, setMeal] = useState(
+    const [draggedMeal, setDraggedMeal] = useState(null);
+    const [modalIsOpen, setIsOpen] = useState(false);
+    const [isSubmitForm, setIsSubmitForm] = useState(false);
+    const [newMeal, setNewMeal] = useState(
         {
             name: "",
             category: "",
+            image: "",
             recipe: null,
             ingredient_list: []
         }
     );
+    // styles for plannerContent
+    var styles = '#plannerContent { display: inline-block; border-radius: 10px; border: 0.5px solid #999999; width: 150px; } \
+                  #image { border-radius: 10px; float: left; margin: 5px; } \
+                  #name { font-size: 10px; text-align: justify; overflow: hidden; }';
+
+    function openModal(){
+        setIsOpen(true);
+    }
+
+    function closeModal(){
+        setIsOpen(false);
+    }
+
+    function submitForm(){
+        setIsSubmitForm(true);
+        props.handleSubmitForm(newMeal);
+        closeModal();
+    }
+
+    function handleFormChange(event) {
+        const { name, value } = event.target;
+        if (name === 'name') {
+            setNewMeal({
+                name: value,
+                category: newMeal['category'],
+                image: newMeal['image'],
+                recipe: newMeal['recipe'],
+                ingredient_list: newMeal['ingredient_list']
+            });
+        } else if (name === 'category') {
+            setNewMeal({
+                name: newMeal['name'],
+                category: value,
+                image: newMeal['image'],
+                recipe: newMeal['recipe'],
+                ingredient_list: newMeal['ingredient_list']
+            });
+        } else if (name === 'image') {
+            setNewMeal({
+                name: newMeal['name'],
+                category: newMeal['category'],
+                image: value,
+                recipe: newMeal['recipe'],
+                ingredient_list: newMeal['ingredient_list']
+            });
+        } else if (name === 'recipe') {
+            setNewMeal({
+                name: newMeal['name'],
+                category: newMeal['category'],
+                image: newMeal['image'],
+                recipe: value,
+                ingredient_list: newMeal['ingredient_list']
+            });
+        } else if (name === 'ingredient_list') {
+            setNewMeal({
+                name: newMeal['name'],
+                category: newMeal['category'],
+                image: newMeal['image'],
+                recipe: newMeal['recipe'],
+                ingredient_list: value
+            });
+        }
+    }
 
     const addWeek = () => {
         var d = startDate.getDate();
@@ -140,45 +207,59 @@ function Planner(props) {
     }
 
     // handles the drag event
-    function onDrag(event, recipe) {
-        setDraggedRecipe(recipe);
-        setMeal(
-            {
-                name: recipe["name"],
-                category: "",
-                recipe: recipe
-            }
-        );
+    function onDrag(event, meal) {
+        setDraggedMeal(meal);
         //console.log('meal in on drag:');
         //console.log(meal);
         event.preventDefault();
     }
 
     // handles the drag over event
-    function onDragOver(event, row, col, category) {
-        setMeal(
+    function onDragOver(event, category, day) {
+        setDraggedMeal(
             {
-                name: draggedRecipe.name,
+                name: draggedMeal.name,
                 category: category,
-                recipe: draggedRecipe
+                image: draggedMeal.image,
+                recipe: draggedMeal.recipe
             }
         );
         //console.log('meal in on drag over:');
         //console.log(meal);
-        document.getElementById('cell-content-' + row + '-' + col).innerHTML = meal['name'];
+        var content = 
+            `<div style="display: inline-block;
+                        border-radius: 10px;
+                        border: 0.5px solid #999999;
+                        width: 150px;">
+                <img src=${draggedMeal.recipe ? draggedMeal.image : "--"}
+                    onError=${'this.style.display = "none"'}
+                    alt=${draggedMeal.name}
+                    width="80"
+                    style="border-radius: 10px;
+                            float: left;
+                            margin: 5px;" />
+                <p style="font-size: 10px;
+                        text-align: justify;
+                        overflow: hidden;">
+                    ${draggedMeal.name}
+                </p>
+            </div>`;
+        document.getElementById('cell-content-' + category + '-' + day).innerHTML = content;
         event.preventDefault();
     }
 
     // handles the drag leave event
-    function onDragLeave(event, row, col) {
-        setMeal(
+    function onDragLeave(event, category, day) {
+        setDraggedMeal(
             {
                 name: "",
                 category: "",
-                recipe: null
+                image: "",
+                recipe: null,
+                ingredient_list: []
             }
         );
-        document.getElementById('cell-content-' + row + '-' + col).innerHTML = null;
+        document.getElementById('cell-content-' + category + '-' + day).innerHTML = null;
         event.preventDefault();
     }
 
@@ -188,8 +269,49 @@ function Planner(props) {
         const temp_date = y + "-" + abbrMonths[d.getMonth()] + "-" + d.getDate();
         //console.log('meal in on drop:');
         //console.log(meal);
-        props.handleDrop(meal, temp_date);
+        props.handleDrop(draggedMeal, temp_date);
         event.preventDefault();
+    }
+
+    function findMeal(year, day, category) {
+        console.log('in find meal');
+        console.log('props.mealOutlineData: ');
+        console.log(props.mealOutlineData);
+        console.log('props.plannedMealData: ');
+        console.log(props.plannedMealData);
+        if (props.mealOutlineData) {
+            for (var i=0; i<(props.mealOutlineData).length; i++) {
+                var curr_mo = (props.mealOutlineData)[i];
+                console.log('here');
+                console.log(curr_mo.date);
+                console.log((year + "-" + abbrMonths[day.getMonth()] + "-" + day.getDate()));
+                if (curr_mo.date === (year + "-" + abbrMonths[day.getMonth()] + "-" + day.getDate())) {
+                    var curr_m = curr_mo.meal_list;
+                    var temp_lst = [];
+                    console.log('got here');
+                    for (var j=0; j<(curr_m.length); j++) {
+                        // find the meal in planned meals
+                        for (var k=0; k<(props.plannedMealData).length; k++) {
+                            console.log('in here');
+                            var curr_pmd = (props.plannedMealData)[k];
+                            console.log(curr_pmd._id);
+                            console.log(curr_m[j]);
+                            if (curr_pmd._id === curr_m[j]) {
+                                console.log(curr_pmd.category);
+                                console.log(category);
+                                if (curr_pmd.category === category) {
+                                    console.log('got em');
+                                    temp_lst.push(curr_pmd);
+                                    console.log(temp_lst);
+                                }
+                            }
+                        }
+                    }
+                    return temp_lst;
+                }
+            }
+        }
+        return [];
     }
 
     return (
@@ -200,26 +322,66 @@ function Planner(props) {
             <div>
                 <div className='ptable'>
                     <div className='ptable-row'>
-                        {props.mealData.map((row, index) => (
-                            <div
-                                className='ptable-cell'
-                                key={row.id}
-                                draggable
-                                onDrag={event => onDrag(event, row)}>
-                                <img src={row.image || '--'}
+                        <div className='ptable-inner'>
+                            {props.mealData.map((row, index) => (
+                                <div
+                                    className='ptable-cell'
+                                    key={row.id}
+                                    draggable="true"
+                                    onDrag={event => onDrag(event, row)}>
+                                    <img 
+                                        draggable="false"
+                                        src={(row.recipe && row.recipe.image)  || '--'}
                                         alt={row.name}
                                         style={{width: 150,
                                                 height: 100,
                                                 objectFit: 'cover',
                                                 position: 'center'}} />
-                                <div className='text'>
-                                    <div className='planner-subtitle'>
-                                        {row.name}
+                                    <div className='text'
+                                         draggable="false">
+                                        <div className='planner-subtitle'
+                                             draggable="false">
+                                            {row.name}
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        ))
-                        }
+                            ))
+                            }
+                        </div>
+                        
+                        <div>
+                            <button onClick={openModal}>+</button>
+                            <Modal
+                                isOpen={modalIsOpen}
+                                onRequestClose={closeModal}>
+                                <button onClick={closeModal}>X</button>
+                                <form>
+                                    <label htmlFor="name">Name</label>
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        id="name"
+                                        value={newMeal.name}
+                                        onChange={handleFormChange} />
+                                    <label htmlFor="recipe">Recipe (optional)</label>
+                                    <input
+                                        type="text"
+                                        name="recipe"
+                                        id="recipe"
+                                        value={newMeal.recipe}
+                                        onChange={handleFormChange} />
+                                    <label htmlFor="ingredient_list">Ingredient List</label>
+                                    <input
+                                        type="text"
+                                        name="ingredient_list"
+                                        id="ingredient_list"
+                                        value={newMeal.ingredient_list}
+                                        onChange={handleFormChange} />
+                                    <input type="button" value="Submit" onClick={submitForm} />
+                                </form>
+                            </Modal> 
+                        </div>
+
                     </div>
                 </div>
             </div>
@@ -249,11 +411,38 @@ function Planner(props) {
                                     <div
                                         className='ptable-cell'
                                         key={day.id}
+                                        
                                         onDrop={event => onDrop(event, day, yearView)}
-                                        onDragOver={event => onDragOver(event, row, col, category)}
-                                        onDragLeave={event => onDragLeave(event, row, col)}>
-                                        <div id={'cell-content-' + row + '-' + col}>
-
+                                        onDragOver={event => onDragOver(event, category, day)}
+                                        onDragLeave={event => onDragLeave(event, category, day)}>
+                                        <div id={'cell-content-' + category + '-' + day}>
+                                            {/*{console.log('meal outline data')}
+                                            {console.log(props.mealOutlineData)}
+                                            {console.log('findMeal')}
+                                            {console.log(findMeal(yearView, day, category))}
+                                            {console.log('planned meal data')}
+                                            {console.log(props.plannedMealData)}*/}
+                                            {props.mealOutlineData ? ((findMeal(yearView, day, category)).map((plannedMeal, num) => {
+                                                return (
+                                                    <>
+                                                        <style>
+                                                            { styles }
+                                                        </style>
+                                                        <div id="plannerContent">
+                                                            {console.log('recipe image')}
+                                                            {console.log(plannedMeal.image)}
+                                                            <img id="image"
+                                                                 src={plannedMeal.recipe ? plannedMeal.image : "--"}
+                                                                 onError={'this.style.display = "none"'}
+                                                                 alt={plannedMeal.name}
+                                                                 width="80" />
+                                                            <p id="name">
+                                                                {plannedMeal.name}
+                                                            </p>
+                                                        </div>
+                                                    </>
+                                                );
+                                            })) : <h4>nothing so far</h4>}
 
 
                                         </div>

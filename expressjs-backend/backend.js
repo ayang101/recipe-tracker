@@ -25,24 +25,22 @@ app.post("/users", async (req, res) => {
 });
 
 app.get("/users", async (req, res) => {
+  const name = req.query["name"];
+  const email = req.query["email"];
+  const username = req.query["username"];
+  const meal_plan = req.query["meal_plan"];
+  const recipe_list = req.query["recipe_list"];
   try {
-    const name = req.params["name"];
-    const email = req.params["email"];
-    const username = req.params["username"];
-    const recipe_list = req.params["recipe_list"];
     const result = await userServices.getUsers(
       name,
       email,
       username,
+      meal_plan,
       recipe_list
     );
-    console.log('result:' + result);
-    if (result) {
-      res.status(200).send({ users: result });
-    } else {
-      res.status(404).send("User doesn't exist");
-    }
+    res.send({ users: result });
   } catch (error) {
+    console.log(error);
     res.status(500).send(error);
   }
 });
@@ -84,7 +82,6 @@ app.get("/users/:username/:password", async (req, res) => {
    const description = req.query["description"];
    const instructions = req.query["instructions"];
    const ingredients = req.query["ingredients"];
-   const user_id = req.query["user_id"];
    try {
     const result = await recipeServices.getRecipes(
       name,
@@ -102,7 +99,6 @@ app.get("/users/:username/:password", async (req, res) => {
       description,
       instructions,
       ingredients,
-      user_id
     );
     res.send({ recipes_list: result });
   } catch (error) {
@@ -144,7 +140,8 @@ app.get("/recipes/custom/:url", async (req, res) => {
   // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
   const execSync = require("child_process").execSync;
   const result = execSync("python scrape.py " + source);
-  console.log('result: ' + result);
+  console.log('result: ');
+  console.log(result);
 
   var dataToSend;
   dataToSend = result.toString();
@@ -172,7 +169,8 @@ app.get("/recipes/custom/:url", async (req, res) => {
     // https://stackoverflow.com/questions/22337446/how-to-wait-for-a-child-process-to-finish-in-node-js
     const execSync = require("child_process").execSync;
     const result = execSync("python scrape.py " + recipe.source);
-    console.log('result: ' + result);
+    console.log('result: ');
+    console.log(result);
 
     var dataToSend;
     dataToSend = result.toString();
@@ -185,12 +183,15 @@ app.get("/recipes/custom/:url", async (req, res) => {
     recipe_obj.source = decodeURIComponent(recipe_obj.source);
     recipe_obj.image = decodeURIComponent(recipe_obj.image);
     recipe_obj.description = decodeURIComponent(recipe_obj.description);
-    recipe_obj.user_id = req.body[2];
     recipe = recipe_obj;
   }
 
   const savedRecipe = await recipeServices.addRecipe(recipe);
-  if (savedRecipe) res.status(201).send(savedRecipe);
+  // update user recipe_list
+  console.log('req.body[2] inside backend');
+  console.log(req.body);
+  const savedUser = await userServices.findAndUpdate(req.body[2], savedRecipe, null);
+  if (savedRecipe && savedUser) res.status(201).send(savedRecipe);
   else res.status(404).end();
  });
 
@@ -238,11 +239,12 @@ app.get("/recipes/:recipeId/:ingredientId", async (req, res) => {
 
 // meal outline
 app.post("/meal-outlines", async (req, res) => {
-  const meal_outline = req.body;
+  const meal_outline = req.body[0];
   console.log('meal outline:');
   console.log(meal_outline);
   const savedMealOutline = await mealOutlineServices.addMealOutline(meal_outline);
-  if (savedMealOutline) res.status(201).send(savedMealOutline);
+  const savedUser = await userServices.findAndUpdate(req.body[1], null, savedMealOutline);
+  if (savedMealOutline && savedUser) res.status(201).send(savedMealOutline);
   else res.status(500).end();
 });
 
@@ -275,13 +277,16 @@ app.post("/meal-outlines/:date", async (req, res) => {
       }
     }
   }
-  meal_outline = meal_outline[target_i];
+  var temp_meal_outline = meal_outline[target_i];
+  console.log('temp meal outline');
+  console.log(temp_meal_outline);
   const newMeal = await mealServices.addMeal(req.body);
 
   if (!newMeal) res.status(500).end();
-  meal_outline = await mealOutlineServices.findAndUpdate(meal_outline._id, newMeal);
+  meal_outline = await mealOutlineServices.findAndUpdate(temp_meal_outline._id, newMeal);
+  temp_meal_outline = await mealOutlineServices.findMealOutlineById(temp_meal_outline._id);
 
-  if (meal_outline) res.status(201).send(newMeal._id);
+  if (meal_outline) res.status(201).send([temp_meal_outline, newMeal]);
   else res.status(500).end();
 });
 
