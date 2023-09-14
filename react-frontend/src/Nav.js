@@ -10,8 +10,7 @@ const Layout = () => {
             <li><Link to="/recipes">COOK</Link></li>
             <li><Link to="/meal-planner">PLAN</Link></li>
             <li><Link to="/grocery-list">SHOP</Link></li>
-            <li><Link to="/login">LOG IN</Link></li>
-            <li><Link to="/signup">SIGN UP</Link></li>
+            <li><Link to="/logout">LOG OUT</Link></li>
           </ul>
         </nav>
         <Outlet />
