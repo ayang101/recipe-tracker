@@ -103,13 +103,23 @@ function MyApp() {
     try {
       const response = await axios.get('http://localhost:5000/meal-outlines');
       var temp_user = JSON.parse(currUser);
+      console.log('users meal plan');
+      console.log(temp_user.meal_plan);
+      console.log('users meal plan length');
+      console.log((temp_user.meal_plan).length);
+      console.log('in backend');
+      console.log(response.data.mealOutline_list);
       var temp = (response.data.mealOutline_list).filter((meal_outline, i) => {
         for (var j=0; j<(temp_user.meal_plan).length; j++) {
-          return temp_user.meal_plan[j] === meal_outline._id; 
+          if (temp_user.meal_plan[j] === meal_outline._id) {
+            return temp_user.meal_plan[j];
+          }
         }
       });
       console.log("current users' meal plan");
-      localStorage.setItem("savedMealPlan", JSON.stringify(temp));
+      setMealOutlines(temp);
+      console.log('meal outlines');
+      //localStorage.setItem("savedMealPlan", JSON.stringify(temp));
       console.log(temp);
       return temp;
     }
@@ -319,7 +329,6 @@ function MyApp() {
         console.log('result');
         console.log(result);
         setCurrUser(JSON.stringify(result));
-        //setMealPlan(result.data.meal_plan);
       }
     });
   }, [] );
@@ -397,6 +406,55 @@ function MyApp() {
     setMeals([...meals, newMeal]);
   }
 
+  function removePlannedMeal(mealOutline, plannedMeal) {
+    // remove planned meal
+    var mo_size = (mealOutline.meal_list).length;
+    makeDeleteCallPlannedMeal(mealOutline, plannedMeal).then( result => {
+      if (result && result.status === 204) {
+        const updated = plannedMeals.filter((planned_meal, i) => {
+          return planned_meal._id !== plannedMeal._id;
+        });
+        setPlannedMeals(updated);
+      }
+    });
+
+    // if removed meal is the last meal in meal outline, remove meal outline
+    if (mo_size === 1) {
+      makeDeleteCallMealOutline(mealOutline).then( result => {
+        if (result && result.status === 204) {
+          const updated = mealOutlines.filter((meal_outline, i) => {
+            return meal_outline._id !== mealOutline._id;
+          });
+          setMealOutlines(updated);
+        }
+      });
+    }
+  }
+
+  async function makeDeleteCallPlannedMeal(mealOutline, plannedMeal){
+    try {
+      const response = await axios.delete('http://localhost:5000/meal-outlines/' + mealOutline.date + '/' + plannedMeal._id);
+      return response;
+    }
+    catch (error) {
+      // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
+
+  async function makeDeleteCallMealOutline(mealOutline){
+    try {
+      const response = await axios.delete('http://localhost:5000/meal-outlines/' + JSON.parse(currUser)._id + '/' + mealOutline.date);
+      return response;
+    }
+    catch (error) {
+      // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
+
 
   return (
     <div className="container">
@@ -446,6 +504,7 @@ function MyApp() {
                     mealOutlineData={mealOutlines}
                     handleDrop={updateMealOutlineMealList}
                     handleSubmitForm={updateMealList}
+                    removePlannedMeal={removePlannedMeal}
                   />
                 }
               />

@@ -49,7 +49,7 @@ async function addUser(user) {
   }
 }
 
-async function findAndUpdate(id, recipe, meal_plan) {
+async function findAndUpdate(id, recipe, meal_outline, to_add) {
   console.log('user id in findAndUpdate');
   console.log(id);
   let user = await userModel.findById(id);
@@ -64,16 +64,19 @@ async function findAndUpdate(id, recipe, meal_plan) {
   };
 
   var updatedUser = null;
-  if(recipe) {
+  if(recipe && !meal_outline && to_add) {
     updatedUser = await userModel.updateOne(query, {
       $push: { recipe_list: recipe._id }
     });
-  } else {
+  } else if (!recipe && meal_outline && to_add) {
     updatedUser = await userModel.updateOne(query, {
-      $push: { meal_plan: meal_plan._id }
+      $push: { meal_plan: meal_outline._id }
+    });
+  } else if (!recipe && meal_outline && !to_add) {
+    updatedUser = await userModel.updateOne(query, {
+      $pull: { meal_plan: meal_outline._id }
     });
   }
-  
 
   user.save();
   console.log('updatedUser');

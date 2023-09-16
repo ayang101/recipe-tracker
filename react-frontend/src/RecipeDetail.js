@@ -66,7 +66,11 @@ function RecipeDetail(props) {
         document.getElementById("tab1").style.display = "none";
         document.getElementById("tab2").style.display = "block";
     };
-    const currRecipe = props.recipeData.find(rec => {return rec._id === recipeId});
+    console.log('recipeData');
+    console.log(props.recipeData);
+    console.log('is array?');
+    console.log(Array.isArray(JSON.parse(props.recipeData)));
+    const currRecipe = JSON.parse(props.recipeData).find(rec => {return rec._id === recipeId});
     if (currRecipe !== undefined) {
         savedRecipe.current = currRecipe;
     }

@@ -277,6 +277,9 @@ function Planner(props) {
         console.log('in find meal');
         console.log('props.mealOutlineData: ');
         console.log(props.mealOutlineData);
+        console.log('type');
+        console.log(typeof props.mealOutlineData);
+        
         console.log('props.plannedMealData: ');
         console.log(props.plannedMealData);
         if (props.mealOutlineData) {
@@ -312,6 +315,18 @@ function Planner(props) {
             }
         }
         return [];
+    }
+
+    function findMealOutline(year, day) {
+        if (props.mealOutlineData) {
+            for (var i=0; i<(props.mealOutlineData).length; i++) {
+                var curr_mo = (props.mealOutlineData)[i];
+                if (curr_mo.date === (year + "-" + abbrMonths[day.getMonth()] + "-" + day.getDate())) {
+                    return curr_mo;
+                }
+            }
+        }
+        return null;
     }
 
     return (
@@ -429,6 +444,13 @@ function Planner(props) {
                                                             { styles }
                                                         </style>
                                                         <div id="plannerContent">
+                                                            <div className='remove-plannedMeal'>
+                                                                {console.log('day id:')}
+                                                                {console.log(abbrDays[day.getDay()] + " " + abbrMonths[day.getMonth()] + " " + day.getDate())}
+                                                                {console.log('plannedMeal id:')}
+                                                                {console.log(plannedMeal._id)}
+                                                                <button onClick={() => props.removePlannedMeal(findMealOutline(yearView, day), plannedMeal)}>x</button>
+                                                            </div>
                                                             {console.log('recipe image')}
                                                             {console.log(plannedMeal.image)}
                                                             <img id="image"
