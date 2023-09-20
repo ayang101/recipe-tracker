@@ -108,7 +108,7 @@ function RecipeDetail(props) {
             </table>
             <table className='block'>
                 <tr>
-                    <td className='left-block'>
+                    <td className='left-block-recipe-detail'>
                         <div className='recipe-image'
                             style={{ backgroundImage: `url("${savedRecipe.current.image}")`,
                                     backgroundPosition: 'left',
@@ -133,50 +133,50 @@ function RecipeDetail(props) {
                     </div>
                 </ul>
                 */}
-                    <td className='right-block'>
-                        <div className='tabs'>
-                        <ul className='tab-content'>
-                            <li className={currTab === "tab0" ? "active" : ""}
-                                onClick={handleTab0}>Equipment</li>
-                            <li className={currTab === "tab1" ? "active" : ""}
-                                onClick={handleTab1}>Ingredients</li>
-                            <li className={currTab === "tab2" ? "active" : ""}
-                                onClick={handleTab2}>Instructions</li>
-                        </ul>
+                    <td className='right-block-recipe-detail'>
+                        <div className='tabs-recipe-detail'>
+                            <ul className='tab-content-recipe-detail'>
+                                <li className={currTab === "tab0" ? "active" : ""}
+                                    onClick={handleTab0}>Equipment</li>
+                                <li className={currTab === "tab1" ? "active" : ""}
+                                    onClick={handleTab1}>Ingredients</li>
+                                <li className={currTab === "tab2" ? "active" : ""}
+                                    onClick={handleTab2}>Instructions</li>
+                            </ul>
 
-                        <table id='tab1'>
-                            <button id='selectAll' type='button' onClick={handleCheckAll}>Select all</button>
-                            {savedRecipe.current.ingredients?.map((element, index) => {
-                                return(
-                                    <tr key={index}>
-                                        <input type='checkbox'
-                                               name="inputCheck"
-                                               id={index}
-                                               value={element}
-                                               checked={isCheck.includes(index)}
-                                               onChange={handleCheckOne}
-                                        />
-                                        <td>{element}</td>
-                                    </tr>
-                                );
-                            })}
-                        </table>
-                        <table id='tab2'>
-                            <ol>
-                                {savedRecipe.current.instructions?.map((element, index) => {
+                            <table id='tab1'>
+                                <button id='selectAll' type='button' onClick={handleCheckAll}>Select all</button>
+                                {savedRecipe.current.ingredients?.map((element, index) => {
                                     return(
-                                        <tr>
-                                            <td>
-                                                <li key={index}>
-                                                    {element}
-                                                </li>
-                                            </td>
+                                        <tr key={index}>
+                                            <input type='checkbox'
+                                                name="inputCheck"
+                                                id={index}
+                                                value={element}
+                                                checked={isCheck.includes(index)}
+                                                onChange={handleCheckOne}
+                                            />
+                                            <td>{element}</td>
                                         </tr>
                                     );
                                 })}
-                            </ol>
-                        </table>
-                        <h4>Result: {isCheck.toString()}</h4>
+                            </table>
+                            <table id='tab2'>
+                                <ol>
+                                    {savedRecipe.current.instructions?.map((element, index) => {
+                                        return(
+                                            <tr>
+                                                <td>
+                                                    <li key={index}>
+                                                        {element}
+                                                    </li>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </ol>
+                            </table>
+                            <h4>Result: {isCheck.toString()}</h4>
                         </div>
                     </td>
                 </tr>
