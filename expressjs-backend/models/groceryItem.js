@@ -15,7 +15,7 @@ const GroceryItemSchema = new mongoose.Schema(
         },
         priority: {
             type: String,
-            required: true,
+            required: false,
             trim: true
         },
         quantity: {

@@ -34,7 +34,8 @@ const UserSchema = new mongoose.Schema(
       index: true*/
     },
     meal_plan: [{ type: Schema.Types.ObjectId, ref: 'MealOutline'}],
-    recipe_list: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }]
+    recipe_list: [{ type: Schema.Types.ObjectId, ref: 'Recipe' }],
+    grocery_lists: [{ type: Schema.Types.ObjectId, ref: 'GroceryList' }]
   },
   { collection: 'users' }
 );
