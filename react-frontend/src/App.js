@@ -58,6 +58,20 @@ function MyApp() {
     }
     return savedPlannedMeals ? JSON.parse(savedPlannedMeals) : [];
   });
+  const [groceryLists, setGroceryLists] = useState(() => {
+    var savedGroceryLists = null;
+    if (localStorage.getItem("savedGroceryLists") !== null) {
+      savedGroceryLists = (localStorage.getItem("savedGroceryLists")).toString().replace(/,+/g,',');
+    }
+    return savedGroceryLists ? JSON.parse(savedGroceryLists) : [];
+  });
+  const [groceryItems, setGroceryItems] = useState(() => {
+    var savedGroceryItems = null;
+    if (localStorage.getItem("savedGroceryItems") !== null) {
+      savedGroceryItems = (localStorage.getItem("savedGroceryItems")).toString().replace(/,+/g,',');
+    }
+    return savedGroceryItems ? JSON.parse(savedGroceryItems) : [];
+  });
   const [isAuth, setIsAuth] = useState(() => {
     // get stored value
     const isValid = localStorage.getItem("isValid");
@@ -215,9 +229,11 @@ function MyApp() {
     localStorage.setItem("savedUser", currUser);
     localStorage.setItem("savedRecipes", recipes);
     console.log('planned meals in app');
-    console.log(plannedMeals);
     localStorage.setItem("savedPlannedMeals", JSON.stringify(plannedMeals));
     localStorage.setItem("savedMealPlan", JSON.stringify(mealOutlines));
+    localStorage.setItem("savedGroceryLists", JSON.stringify(groceryLists));
+    localStorage.setItem("savedGroceryItems", JSON.stringify(groceryItems));
+
   };
 
   function removeOneRecipe (index) {
@@ -336,7 +352,7 @@ function MyApp() {
   function updateMealOutlineMealList(meal, date) {
     // check if the mealOutline exists for the given date
     var mealOutlineExists = false;
-    for (var i; i < mealOutlines; i++) {
+    for (var i=0; i < mealOutlines; i++) {
       var temp_meal = mealOutlines[i];
       if (temp_meal["date"] === date) {
         mealOutlineExists = true;
@@ -454,6 +470,95 @@ function MyApp() {
       return false;
     }
   }
+  
+  function updateGroceryList(grocery_list) {
+    makePostCallGroceryList(grocery_list).then( result => {
+      grocery_list = result.data;
+      if (result && result.status === 201) {
+        setGroceryLists([...groceryLists, grocery_list]);
+      }
+    });
+  }
+
+  async function makePostCallGroceryList(grocery_list){
+    try {
+      const response = await axios.post('http://localhost:5000/grocery-lists', grocery_list);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  function updateGroceryListGroceryItem(id, grocery_item) {
+    makePostCallGroceryItem(id, grocery_item).then( result => {
+      var newGroceryList = (result.data)[0];
+      var grocery_item = (result.data)[1];
+      if (result && result.status === 201) {
+        // replace the old grocery list with the updated grocery list
+        if (groceryLists) {
+          var newLists = groceryLists;
+          for (var i=0; i<newLists.length; i++) {
+            console.log('old id');
+            console.log(newLists[i]._id);
+            console.log('new id');
+            console.log(newGroceryList._id);
+            if (newLists[i]._id === newGroceryList._id) {
+              newLists[i] = newGroceryList;
+              break;
+            }
+          }
+          console.log('newLists');
+          console.log(newLists);
+          setGroceryLists(newLists);
+        }
+        setGroceryItems([...groceryItems, grocery_item]);
+      }
+    });
+  }
+
+  async function makePostCallGroceryItem(id, grocery_item){
+    try {
+      const response = await axios.post('http://localhost:5000/grocery-lists/' + id, grocery_item);
+      return response;
+    }
+    catch (error) {
+      console.log(error);
+      return false;
+    }
+  }
+
+  useEffect(() => {
+    fetchGroceryLists().then( result => {
+      if (result) {
+        setGroceryLists(groceryLists);
+      }
+    });
+  }, [] );
+
+  async function fetchGroceryLists(){
+    try {
+      const response = await axios.get('http://localhost:5000/grocery-lists');
+      var temp_user = JSON.parse(currUser);
+      var temp = (response.data.groceryList_list).filter((grocery_list, i) => {
+        for (var j=0; j<(temp_user.grocery_lists).length; j++) {
+          if (temp_user.grocery_lists[j] === grocery_list._id) {
+            return temp_user.grocery_lists[j];
+          }
+        }
+      });
+      console.log("current users' grocery list");
+      setGroceryLists(temp);
+      console.log(temp);
+      return temp;
+    }
+    catch (error) {
+      // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
 
 
   return (
@@ -494,7 +599,13 @@ function MyApp() {
               />
               <Route
                 path="/grocery-list"
-                element={<GroceryList />} />
+                element={
+                  <GroceryList
+                    groceryLists={groceryLists}
+                    groceryItems={groceryItems}
+                    handleGroceryListSubmitForm={updateGroceryList}
+                    handleGroceryItemSubmitForm={updateGroceryListGroceryItem}
+                  />} />
               <Route
                 path="/meal-planner"
                 element={

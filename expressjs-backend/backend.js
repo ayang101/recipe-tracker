@@ -8,6 +8,8 @@ const recipeServices = require('./models/recipe-services');
 const ingredientServices = require('./models/ingredient-services');
 const mealOutlineServices = require('./models/mealOutline-services');
 const mealServices = require('./models/meal-services');
+const groceryListServices = require('./models/grocerylist-services');
+const groceryItemServices = require('./models/groceryItem-services');
 
 app.use(cors());
 app.use(express.json());
@@ -378,6 +380,71 @@ app.get("/meal-outlines/:date/:id", async (req, res) => {
     res.status(404).send("Resource not found.");
   } else {
     result = { meal_list: result };
+    res.send(result);
+  }
+});
+
+// grocery list
+app.post("/grocery-lists", async (req, res) => {
+  const grocery_list = req.body;
+  const savedGroceryList = await groceryListServices.addGroceryList(grocery_list);
+  if (savedGroceryList) res.status(201).send(savedGroceryList);
+  else res.status(500).end();
+});
+
+app.get("/grocery-lists", async (req, res) => {
+  const name = req.query["name"];
+  const items = req.query["items"];
+  try {
+    const result = await groceryListServices.getGroceryLists(
+      name,
+      items
+    );
+    res.send({ groceryList_list: result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
+
+// grocery items
+app.get("/grocery-lists/:id", async (req, res) => {
+  const id = req.params["id"];
+  let result = await groceryListServices.findGroceryListById(id);
+  if (result === undefined || result === null) {
+    res.status(404).send("Resource not found.");
+  } else {
+    result = { groceryList_list: result };
+    res.send(result);
+  }
+});
+
+app.post("/grocery-lists/:id", async (req, res) => {
+  const id = req.params['id'];
+  var grocery_list = await groceryListServices.findGroceryListById(id);
+
+  if (!grocery_list) res.status(500).end();
+  else {
+    const newGroceryItem = await groceryItemServices.addGroceryItem(req.body);
+
+    if (!newGroceryItem) res.status(500).end();
+    grocery_list = await groceryListServices.findAndUpdate(id, newGroceryItem);
+    // get updated grocery list object
+    grocery_list = await groceryListServices.findGroceryListById(id);
+
+    if (grocery_list) res.status(201).send([grocery_list, newGroceryItem]);
+    else res.status(500).end();
+  }
+});
+
+app.get("/grocery-list/:id/grocery-items", async (req, res) => {
+  const id = req.params['id'];
+
+  let result = await groceryListServices.findGroceryListById(id);
+  if (result === undefined || result === null) {
+    res.status(404).send("Resource not found.");
+  } else {
+    result = { groceryList_list: result };
     res.send(result);
   }
 });
