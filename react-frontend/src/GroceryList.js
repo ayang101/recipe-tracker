@@ -66,8 +66,6 @@ function GroceryList(props) {
         // get the grocery list where the grocery item will be added to
         var grocery_list_id = event.currentTarget.id;
 
-        console.log('grocery list to add to');
-        console.log(grocery_list_id);
         setIsSubmitGroceryItemForm(true);
         props.handleGroceryItemSubmitForm(grocery_list_id, newGroceryItem);
         closeGroceryItemModal();
@@ -136,8 +134,6 @@ function GroceryList(props) {
             }
         }
         setCurrTab(current_tab);
-        console.log('current tab');
-        console.log(currTab);
 
         var allTabs = document.getElementsByClassName('tab-content-grocery-list');
         for (var j=0; j<allTabs.length; j++) {
@@ -147,7 +143,6 @@ function GroceryList(props) {
         }
 
         // only the currently clicked on tab is displayed
-        console.log(document.getElementById(current_tab));
         document.getElementById(current_tab).style.display = "block";
     }
     
@@ -197,8 +192,6 @@ function GroceryList(props) {
                                         All
                                 </li>
                                 {props.groceryLists.map((row, index) => {
-                                    {console.log('row name:')}
-                                    {console.log(row.name)}
                                     return (
                                         <li className={currTab === ('tab-' + row.name) ? "active" : ""}
                                             id={'tab-' + row.name}
@@ -229,77 +222,77 @@ function GroceryList(props) {
                             {/* here is where the grocery items for the active grocery list goes */}
                             {console.log('grocery lists:')}
                             {console.log(props.groceryLists)}
-                                <>
-                                    {currTab === "all" ?
-                                        ((props.groceryItems && props.groceryItems.length > 0) ?
-                                            props.groceryItems.map((element, index) => {
+                            <>
+                                {currTab === "all" ?
+                                    ((props.groceryItems && props.groceryItems.length > 0) ?
+                                        <ul className='tab-content-grocery-list'
+                                            id={currTab}>
+                                            {props.groceryItems.map((element, index) => {
                                                 return (
-                                                    <ul className='tab-content-grocery-list'
-                                                        id={currTab}>
-                                                        <li key={index}>
-                                                            {element.name}
-                                                        </li>
-                                                    </ul>
+                                                    <li key={index}>
+                                                        {element.name}
+                                                    </li>
                                                 )
-                                            }) :
-                                            <p>No items in list</p>
-                                        ) :
+                                            })}
+                                        </ul> :
+                                        <p>No items in list</p>
+                                    ) :
+                                    <div>
                                         <div>
-                                            <div>
-                                                <button onClick={openGroceryItemModal}>+</button>
-                                                <Modal
-                                                    isOpen={modalGroceryItemIsOpen}
-                                                    onRequestClose={closeGroceryItemModal}>
-                                                    <button onClick={closeGroceryItemModal}>X</button>
-                                                    <form>
-                                                        <label htmlFor="name">Name</label>
-                                                        <input
-                                                            type="text"
-                                                            name="name"
-                                                            id="name"
-                                                            value={newGroceryItem.name}
-                                                            onChange={handleGroceryItemFormChange} />
-                                                        <label htmlFor="category">Category</label>
-                                                        <input
-                                                            type="text"
-                                                            name="category"
-                                                            id="category"
-                                                            value={newGroceryItem.category}
-                                                            onChange={handleGroceryItemFormChange} />
-                                                        <label htmlFor="priority">Priority</label>
-                                                        <input
-                                                            type="text"
-                                                            name="priority"
-                                                            id="priority"
-                                                            value={newGroceryItem.priority}
-                                                            onChange={handleGroceryItemFormChange} />
-                                                        <label htmlFor="quantity">Quantity</label>
-                                                        <input
-                                                            type="text"
-                                                            name="quantity"
-                                                            id="quantity"
-                                                            value={newGroceryItem.quantity}
-                                                            onChange={handleGroceryItemFormChange} />
-                                                        <input id={currGroceryList ? currGroceryList._id : null} type="button" value="Submit" onClick={submitGroceryItemForm} />
-                                                    </form>
-                                                </Modal>
-                                            </div>
-                                            {(currGroceryList.items && currGroceryList.items.length > 0) ?
-                                                <ul className='tab-content-grocery-list'
-                                                    id={currTab}>
-                                                    {getGroceryItems(currGroceryList.items).map((element, index) => {
-                                                            return (
-                                                                <li key={index}>
-                                                                    {element.name}
-                                                                </li>
-                                                            )
-                                                        })}
-                                                </ul> :
-                                                <p>No items in list</p>
-                                            }
+                                            <button onClick={openGroceryItemModal}>+</button>
+                                            <Modal
+                                                isOpen={modalGroceryItemIsOpen}
+                                                onRequestClose={closeGroceryItemModal}>
+                                                <button onClick={closeGroceryItemModal}>X</button>
+                                                <form>
+                                                    <label htmlFor="name">Name</label>
+                                                    <input
+                                                        type="text"
+                                                        name="name"
+                                                        id="name"
+                                                        value={newGroceryItem.name}
+                                                        onChange={handleGroceryItemFormChange} />
+                                                    <label htmlFor="category">Category</label>
+                                                    <input
+                                                        type="text"
+                                                        name="category"
+                                                        id="category"
+                                                        value={newGroceryItem.category}
+                                                        onChange={handleGroceryItemFormChange} />
+                                                    <label htmlFor="priority">Priority</label>
+                                                    <input
+                                                        type="text"
+                                                        name="priority"
+                                                        id="priority"
+                                                        value={newGroceryItem.priority}
+                                                        onChange={handleGroceryItemFormChange} />
+                                                    <label htmlFor="quantity">Quantity</label>
+                                                    <input
+                                                        type="text"
+                                                        name="quantity"
+                                                        id="quantity"
+                                                        value={newGroceryItem.quantity}
+                                                        onChange={handleGroceryItemFormChange} />
+                                                    <input id={currGroceryList ? currGroceryList._id : null} type="button" value="Submit" onClick={submitGroceryItemForm} />
+                                                </form>
+                                            </Modal>
                                         </div>
-                                    }
-                                </>
+                                        {(currGroceryList.items && currGroceryList.items.length > 0) ?
+                                            <ul className='tab-content-grocery-list'
+                                                id={currTab}>
+                                                {getGroceryItems(currGroceryList.items).map((element, index) => {
+                                                        return (
+                                                            <li key={index}>
+                                                                {element.name}
+                                                            </li>
+                                                        )
+                                                    })}
+                                            </ul> :
+                                            <p>No items in list</p>
+                                        }
+                                    </div>
+                                }
+                            </>
                         </div>
                     </td>
                 </tr>
