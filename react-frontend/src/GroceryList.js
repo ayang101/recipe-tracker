@@ -3,6 +3,7 @@ import Modal from 'react-modal';
 import './App.css';
 
 function GroceryList(props) {
+    //localStorage.setItem('savedCheck-2', []);
     const [isSubmitGroceryListForm, setIsSubmitGroceryListForm] = useState(false);
     const [modalGroceryListIsOpen, setModalGroceryListIsOpen] = useState(false);
     const [isSubmitGroceryItemForm, setIsSubmitGroceryItemForm] = useState(false);
@@ -125,6 +126,7 @@ function GroceryList(props) {
     }
 
     window.onbeforeunload = (e) => {
+        console.log(JSON.parse(isCheck));
         localStorage.setItem("savedCheck-2", isCheck);
     };
 
@@ -185,8 +187,8 @@ function GroceryList(props) {
         const id = event.currentTarget.value;
         const checked = event.currentTarget.checked;
         const checkedGroceryItem = getGroceryItemFromId(id);
-        console.log('checked');
-        console.log(checked);
+        console.log('isCheck');
+        console.log(isCheck);
         if (checked) {
             // add to checked items list
             setIsCheck([...isCheck, id]);
@@ -342,7 +344,7 @@ function GroceryList(props) {
                                                                        name="inputCheck"
                                                                        id={index}
                                                                        value={element._id}
-                                                                       checked={isCheck.includes(element._id)}
+                                                                       checked={isCheck.includes(element._id) || element.isComplete}
                                                                        onChange={handleCheckOne}
                                                                 />
                                                                 {element.name}

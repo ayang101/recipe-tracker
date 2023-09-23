@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom'
 import './App.css';
 
 function RecipeDetail(props) {
+    localStorage.setItem("savedCheck", []);
+    localStorage.setItem("savedIngr", []);
     const [isCheck, setIsCheck] = useState(() => {
         // get stored value
         const savedIndex = localStorage.getItem("savedCheck");
@@ -21,34 +23,33 @@ function RecipeDetail(props) {
             setIsCheck([]);
             document.getElementById("selectAll").innerText = "Select all";
         } else {
-            setIsCheck(Array.from({length: (savedRecipe.current.ingredients).length}, (_, n) => n));
+            setIsCheck(Array.from({length: (savedRecipe.current.ingredients).length}, (_, n) => savedRecipe.current.ingredients[n]));
             document.getElementById("selectAll").innerText = "Deselect all";
         }
     };
     const handleCheckOne = (event) => {
-        const id =  parseInt(event.target.id);
-        const checked = event.target.checked;
-        var array = JSON.parse("[" + isCheck.toString().replace(/,+/g,',') + "]");
+        const id =  event.currentTarget.value;
+        const checked = event.currentTarget.checked;
         console.log('isCheck');
-        console.log(array);
+        console.log(isCheck);
+        console.log('id to add');
+        console.log(id);
         if (checked) {
             // add to checked items list
-            setIsCheck([...array, id]);
+            setIsCheck([...isCheck, id]);
         } else {
             // remove from checked items list
-            var temp = array.filter(item => item !== id).toString();
-            setIsCheck(temp.replace(/^\[(.+)\]$/,'$1').replace(/,\s*$/, ""));
+            var temp = isCheck.filter(item => item !== id);
+            setIsCheck(temp);
             document.getElementById("selectAll").innerText = "Select all";
+            console.log('temp in handle check one');
+            console.log(temp);
         }
     };
     
     window.onbeforeunload = (e) => {
         localStorage.setItem("savedCheck", isCheck);
-        var ingr_array = JSON.parse("[" + isCheck.toString().replace(/,+/g,',') + "]");
-        for (var i=0; i<ingr_array.length; i++) {
-            ingr_array[i] = savedRecipe.current.ingredients[ingr_array[i]];
-        }
-        localStorage.setItem("savedIngr", ingr_array);
+        localStorage.setItem("savedIngr", isCheck);
     };
 
     // handle tab switching
@@ -153,7 +154,7 @@ function RecipeDetail(props) {
                                                 name="inputCheck"
                                                 id={index}
                                                 value={element}
-                                                checked={isCheck.includes(index)}
+                                                checked={isCheck.includes(element)}
                                                 onChange={handleCheckOne}
                                             />
                                             <td>{element}</td>
