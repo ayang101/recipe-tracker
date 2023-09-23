@@ -20,6 +20,10 @@ import axios from 'axios';
 function MyApp() { 
   //localStorage.setItem("savedMealPlan", []);
   //localStorage.setItem("savedPlannedMeals", []);
+  //localStorage.setItem("savedGroceryLists", []);
+  //localStorage.setItem("savedGroceryItems", []);
+  //localStorage.setItem('savedCheck', []);
+  
   const [currUser, setCurrUser] = useState(() => {
     // get stored value
     console.log('local storage saved user');
@@ -61,7 +65,9 @@ function MyApp() {
   const [groceryLists, setGroceryLists] = useState(() => {
     var savedGroceryLists = null;
     if (localStorage.getItem("savedGroceryLists") !== null) {
+      console.log('local storage saved grocery lists');
       savedGroceryLists = (localStorage.getItem("savedGroceryLists")).toString().replace(/,+/g,',');
+      console.log(savedGroceryLists);
     }
     return savedGroceryLists ? JSON.parse(savedGroceryLists) : [];
   });
@@ -173,6 +179,12 @@ function MyApp() {
         setUsers([...users, user]);
         for (var i=0; i<user.meal_plan.length; i++) {
           setMealOutlines([...mealOutlines, user.meal_plan.at(i)]);
+        }
+        for (var j=0; j<user.recipe_list.length; j++) {
+          setRecipes([...recipes, user.recipe_list.at(j)]);
+        }
+        for (var k=0; k<user.grocery_lists.length; k++) {
+          setGroceryLists([...groceryLists, user.grocery_lists.at(k)]);
         }
       }
     });
@@ -473,7 +485,7 @@ function MyApp() {
   
   function updateGroceryList(grocery_list) {
     makePostCallGroceryList(grocery_list).then( result => {
-      grocery_list = result.data;
+      const grocery_list = result.data;
       if (result && result.status === 201) {
         setGroceryLists([...groceryLists, grocery_list]);
       }
@@ -482,7 +494,8 @@ function MyApp() {
 
   async function makePostCallGroceryList(grocery_list){
     try {
-      const response = await axios.post('http://localhost:5000/grocery-lists', grocery_list);
+      const response = await axios.post('http://localhost:5000/grocery-lists', [grocery_list,
+                                                                                JSON.parse(currUser)._id]);
       return response;
     }
     catch (error) {
@@ -532,7 +545,11 @@ function MyApp() {
   useEffect(() => {
     fetchGroceryLists().then( result => {
       if (result) {
-        setGroceryLists(groceryLists);
+        setGroceryLists(result);
+        // set the grocery items using the grocery list
+        fetchGroceryItems(result).then( result_2 => {
+          setGroceryItems(result_2);
+        });
       }
     });
   }, [] );
@@ -541,6 +558,10 @@ function MyApp() {
     try {
       const response = await axios.get('http://localhost:5000/grocery-lists');
       var temp_user = JSON.parse(currUser);
+      console.log('temp');
+      console.log(response.data.groceryList_list);
+      console.log('temp grocery lists');
+      console.log(temp_user.grocery_lists);
       var temp = (response.data.groceryList_list).filter((grocery_list, i) => {
         for (var j=0; j<(temp_user.grocery_lists).length; j++) {
           if (temp_user.grocery_lists[j] === grocery_list._id) {
@@ -555,6 +576,54 @@ function MyApp() {
     }
     catch (error) {
       // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
+
+  async function fetchGroceryItems(grocery_lists){
+    try {
+      const response = await axios.get('http://localhost:5000/grocery-items');
+      var temp = (response.data.groceryItem_list).filter((grocery_item, i) => {
+        for (var j=0; j<grocery_lists.length; j++) {
+          for (var k=0; k<grocery_lists[j].items.length; k++) {
+            if (grocery_lists[j].items[k] === grocery_item._id) {
+              return grocery_item;
+            }
+          }
+        }
+      });
+      console.log("current users' grocery items list");
+      setGroceryItems(temp);
+      console.log(temp);
+      return temp;
+    }
+    catch (error) {
+      // we're not handling errors. Just logging into the console
+      console.log(error);
+      return false;
+    }
+  }
+
+  function updateGroceryItemIsComplete(id) {
+    makePatchCallGroceryItem(id).then( result => {
+      const grocery_items = result.data;
+      console.log('groceryItems');
+      console.log(grocery_items);
+      if (result && result.status === 201) {
+        setGroceryItems(grocery_items);
+      }
+    });
+  }
+
+  async function makePatchCallGroceryItem(id){
+    try {
+      const response = await axios.patch('http://localhost:5000/grocery-items/' + id);
+      console.log('response');
+      console.log(response.data);
+      return response;
+    }
+    catch (error) {
       console.log(error);
       return false;
     }
@@ -605,6 +674,7 @@ function MyApp() {
                     groceryItems={groceryItems}
                     handleGroceryListSubmitForm={updateGroceryList}
                     handleGroceryItemSubmitForm={updateGroceryListGroceryItem}
+                    updateGroceryItemIsComplete={updateGroceryItemIsComplete}
                   />} />
               <Route
                 path="/meal-planner"

@@ -192,7 +192,7 @@ app.get("/recipes/custom/:url", async (req, res) => {
   // update user recipe_list
   console.log('req.body[2] inside backend');
   console.log(req.body);
-  const savedUser = await userServices.findAndUpdate(req.body[2], savedRecipe, null, true);
+  const savedUser = await userServices.findAndUpdate(req.body[2], savedRecipe, null, null, true);
   if (savedRecipe && savedUser) res.status(201).send(savedRecipe);
   else res.status(404).end();
  });
@@ -245,7 +245,7 @@ app.post("/meal-outlines", async (req, res) => {
   console.log('meal outline:');
   console.log(meal_outline);
   const savedMealOutline = await mealOutlineServices.addMealOutline(meal_outline);
-  const savedUser = await userServices.findAndUpdate(req.body[1], null, savedMealOutline, true);
+  const savedUser = await userServices.findAndUpdate(req.body[1], null, savedMealOutline, null, true);
   if (savedMealOutline && savedUser) res.status(201).send(savedMealOutline);
   else res.status(500).end();
 });
@@ -315,7 +315,7 @@ async function deleteMealOutlineById(id) {
 
 async function deleteMealOutlineFromUser(user_id, mo) {
   try {
-    if (await userServices.findAndUpdate(user_id, null, mo, false)) return true;
+    if (await userServices.findAndUpdate(user_id, null, mo, null, false)) return true;
   } catch (error) {
     console.log(error);
     return false;
@@ -386,9 +386,10 @@ app.get("/meal-outlines/:date/:id", async (req, res) => {
 
 // grocery list
 app.post("/grocery-lists", async (req, res) => {
-  const grocery_list = req.body;
+  const grocery_list = req.body[0];
   const savedGroceryList = await groceryListServices.addGroceryList(grocery_list);
-  if (savedGroceryList) res.status(201).send(savedGroceryList);
+  const savedUser = await userServices.findAndUpdate(req.body[1], null, null, savedGroceryList, true);
+  if (savedGroceryList && savedUser) res.status(201).send(savedGroceryList);
   else res.status(500).end();
 });
 
@@ -447,6 +448,47 @@ app.get("/grocery-list/:id/grocery-items", async (req, res) => {
     result = { groceryList_list: result };
     res.send(result);
   }
+});
+
+app.get("/grocery-items", async (req, res) => {
+  try {
+    const result = await groceryItemServices.getGroceryItems();
+    res.send({ groceryItem_list: result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
+
+app.get("/grocery-items/:id", async (req, res) => {
+  const id = req.params['id'];
+  try {
+    console.log('id of grocery item');
+    console.log(id);
+    const result = await groceryItemServices.findGroceryItemById(id);
+    res.send({ groceryItem_list: result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send(error);
+  }
+});
+
+app.patch("/grocery-items/:id", async (req, res) => {
+  // update a resouce, assuming it exists
+  const id = req.params['id'];
+  const grocery_item = await groceryItemServices.findGroceryItemById(id);
+  const isComplete = grocery_item.isComplete;
+  console.log('isComplete before');
+  console.log(isComplete);
+  console.log('not isComplete');
+  console.log(!isComplete);
+
+  // update the isCheck parameter by settting isCheck to !isCheck
+  
+  const savedGroceryItem = await groceryItemServices.findAndUpdate(id, null, null, null, null, !isComplete);
+  const grocery_items = await groceryItemServices.getGroceryItems();
+  if (savedGroceryItem && grocery_items) res.status(201).send(grocery_items);
+  else res.status(500).end();
 });
 
  app.listen(process.env.PORT || port, () => {

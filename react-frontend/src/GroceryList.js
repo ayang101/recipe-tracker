@@ -9,6 +9,14 @@ function GroceryList(props) {
     const [modalGroceryItemIsOpen, setModalGroceryItemIsOpen] = useState(false);
     const [currTab, setCurrTab] = useState("all");
     const [currGroceryList, setCurrGroceryList] = useState(null);
+    const [isCheck, setIsCheck] = useState(() => {
+        // get stored value
+        const savedIndex = localStorage.getItem("savedCheck-2");
+        if (savedIndex !== null) {
+            return savedIndex.toString().replace(/,+/g,',');
+        }
+        return [];
+    });
     const [newGroceryList, setNewGroceryList] = useState(
         {
             name: "",
@@ -19,8 +27,8 @@ function GroceryList(props) {
         {
             name: "",
             category: "",
-            priority: "",
-            quantity: "",
+            priority: 1,
+            quantity: 1,
             isComplete: false
         }
     );
@@ -116,6 +124,10 @@ function GroceryList(props) {
         return tab;
     }
 
+    window.onbeforeunload = (e) => {
+        localStorage.setItem("savedCheck-2", isCheck);
+    };
+
     const handleTab = (event) => {
         console.log('current tab:')
         console.log(event.currentTarget.id);
@@ -146,7 +158,7 @@ function GroceryList(props) {
         document.getElementById(current_tab).style.display = "block";
     }
     
-    function getGroceryItems(grocery_item_ids) {
+    function getGroceryItemsFromIdArray(grocery_item_ids) {
         var grocery_items_arr = [];
         for (var k=0; k<grocery_item_ids.length; k++) {
             for (var l=0; l<props.groceryItems.length; l++) {
@@ -157,6 +169,47 @@ function GroceryList(props) {
             }
         }
         return grocery_items_arr;
+    }
+
+    function getGroceryItemFromId(grocery_item_id) {
+        for (var m=0; m<props.groceryItems.length; m++) {
+            if (props.groceryItems[m]._id === grocery_item_id) {
+                return props.groceryItems[m];
+            }
+        }
+        console.log("getGroceryItemFromId: grocery item not found");
+        return null;
+    }
+
+    const handleCheckOne = (event) => {
+        const id = event.currentTarget.value;
+        const checked = event.currentTarget.checked;
+        const checkedGroceryItem = getGroceryItemFromId(id);
+        console.log('checked');
+        console.log(checked);
+        if (checked) {
+            // add to checked items list
+            setIsCheck([...isCheck, id]);
+            console.log('item is checked, isComplete:');
+            console.log(checkedGroceryItem.isComplete);
+            if (checkedGroceryItem.isComplete === false) {
+                console.log('isComplete is false, called props');
+                props.updateGroceryItemIsComplete(id);
+            }
+        } else {
+            // remove from checked items list
+            console.log('temp');
+            var temp = (JSON.parse("[" + JSON.stringify(isCheck).replace(/,+/g,',') + "]")).filter(item => item !== id);
+            setIsCheck(temp);
+            if (checkedGroceryItem.isComplete === true) {
+                console.log('isComplete is true, called props');
+                props.updateGroceryItemIsComplete(id);
+            }
+        }
+        console.log('grocery items');
+        console.log(props.groceryItems);
+        console.log('isCheck');
+        console.log(isCheck);
     }
 
     return (
@@ -222,6 +275,8 @@ function GroceryList(props) {
                             {/* here is where the grocery items for the active grocery list goes */}
                             {console.log('grocery lists:')}
                             {console.log(props.groceryLists)}
+                            {console.log('grocery items:')}
+                            {console.log(props.groceryItems)}
                             <>
                                 {currTab === "all" ?
                                     ((props.groceryItems && props.groceryItems.length > 0) ?
@@ -280,9 +335,16 @@ function GroceryList(props) {
                                         {(currGroceryList.items && currGroceryList.items.length > 0) ?
                                             <ul className='tab-content-grocery-list'
                                                 id={currTab}>
-                                                {getGroceryItems(currGroceryList.items).map((element, index) => {
+                                                {getGroceryItemsFromIdArray(currGroceryList.items).map((element, index) => {
                                                         return (
                                                             <li key={index}>
+                                                                <input type='checkbox'
+                                                                       name="inputCheck"
+                                                                       id={index}
+                                                                       value={element._id}
+                                                                       checked={isCheck.includes(element._id)}
+                                                                       onChange={handleCheckOne}
+                                                                />
                                                                 {element.name}
                                                             </li>
                                                         )
