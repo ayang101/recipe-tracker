@@ -11,81 +11,90 @@ import SignupForm from './SignupForm';
 import Logout from './Logout';
 import NavBar from './Nav';
 import GuestNav from './GuestNav';
+import GuestHome from './GuestHome';
 import Home from './Home';
 import ErrorPage from './ErrorPage';
 import PrivateRoutes from './PrivateRoutes';
 import axios from 'axios';
 
 
-function MyApp() { 
+function MyApp() {
   //localStorage.setItem("savedMealPlan", []);
   //localStorage.setItem("savedPlannedMeals", []);
   //localStorage.setItem("savedGroceryLists", []);
   //localStorage.setItem("savedGroceryItems", []);
   //localStorage.setItem('savedCheck', []);
-  
+  //localStorage.setItem("isValid", false);
+  //localStorage.clear();
+  const [isAuth, setIsAuth] = useState(() => {
+    // get stored value
+    console.log("local storage is authenticated")
+    var isValid = null;
+    if (localStorage.getItem("isValid")) {
+        isValid = localStorage.getItem("isValid");
+    }
+    return isValid ? JSON.parse(isValid) : false;
+  });
   const [currUser, setCurrUser] = useState(() => {
     // get stored value
     console.log('local storage saved user');
-    const savedUser = (localStorage.getItem("savedUser")).toString().replace(/,+/g,',');
+    var savedUser = null;
+    if (isAuth && localStorage.getItem("savedUser") !== null) {
+      savedUser = (localStorage.getItem("savedUser")).toString().replace(/,+/g,',');
+    }
     console.log(savedUser);
     return savedUser ? savedUser : null;
   });
   const [recipes, setRecipes] = useState(() => {
     // get stored value
     console.log('local storage saved recipes');
-    //console.log(localStorage.getItem("savedRecipes"));
-    console.log((localStorage.getItem("savedRecipes")).toString().replace(/,+/g,','));
     var savedRecipes = null;
-    if (localStorage.getItem("savedRecipes") !== null) {
+    if (isAuth && localStorage.getItem("savedRecipes") !== null) {
       savedRecipes = (localStorage.getItem("savedRecipes")).toString().replace(/,+/g,',');
     }
+    console.log(savedRecipes);
     return savedRecipes ? savedRecipes : [];
   });
   const [currRecipe, setCurrRecipe] = useState(null);
   const [users, setUsers] = useState([]);
   const [mealOutlines, setMealOutlines] = useState(() => {
     console.log('local storage saved meal outlines');
-    //console.log(localStorage.getItem("savedRecipes"));
-    console.log((localStorage.getItem("savedMealPlan")).toString().replace(/,+/g,','));
     var savedMealOutlines = null;
-    if (localStorage.getItem("savedMealPlan") !== null) {
+    if (isAuth && localStorage.getItem("savedMealPlan") !== null) {
       savedMealOutlines = (localStorage.getItem("savedMealPlan")).toString().replace(/,+/g,',');
     }
+    console.log(savedMealOutlines);
     return savedMealOutlines ? JSON.parse(savedMealOutlines) : [];
   });
   const [meals, setMeals] = useState([]);
   const [plannedMeals, setPlannedMeals] = useState(() => {
+    console.log('local storage saved planned meals');
     var savedPlannedMeals = null;
-    if (localStorage.getItem("savedPlannedMeals") !== null) {
+    if (isAuth && localStorage.getItem("savedPlannedMeals") !== null) {
       savedPlannedMeals = (localStorage.getItem("savedPlannedMeals")).toString().replace(/,+/g,',');
     }
+    console.log(savedPlannedMeals);
     return savedPlannedMeals ? JSON.parse(savedPlannedMeals) : [];
   });
   const [groceryLists, setGroceryLists] = useState(() => {
+    console.log('local storage saved grocery lists');
     var savedGroceryLists = null;
-    if (localStorage.getItem("savedGroceryLists") !== null) {
-      console.log('local storage saved grocery lists');
+    if (isAuth && localStorage.getItem("savedGroceryLists") !== null) {
       savedGroceryLists = (localStorage.getItem("savedGroceryLists")).toString().replace(/,+/g,',');
-      console.log(savedGroceryLists);
     }
+    console.log(savedGroceryLists);
     return savedGroceryLists ? JSON.parse(savedGroceryLists) : [];
   });
   const [groceryItems, setGroceryItems] = useState(() => {
+    console.log('local storage saved grocery items');
     var savedGroceryItems = null;
-    if (localStorage.getItem("savedGroceryItems") !== null) {
+    if (isAuth && localStorage.getItem("savedGroceryItems") !== null) {
       savedGroceryItems = (localStorage.getItem("savedGroceryItems")).toString().replace(/,+/g,',');
     }
+    console.log(savedGroceryItems);
     return savedGroceryItems ? JSON.parse(savedGroceryItems) : [];
   });
-  const [isAuth, setIsAuth] = useState(() => {
-    // get stored value
-    const isValid = localStorage.getItem("isValid");
-    if (isValid !== null) {
-        return JSON.parse(isValid);
-    }
-    return false;
-  });
+
 
   console.log('planned meals in app');
   console.log(plannedMeals);
@@ -115,6 +124,28 @@ function MyApp() {
     fetchMealPlan().then( result => {
       if (result) {
         setMealOutlines(mealOutlines);
+      }
+    });
+  }, [] );
+
+  useEffect(() => {
+    fetchUser().then( result => {
+      if (result) {
+        console.log('result');
+        console.log(result);
+        setCurrUser(JSON.stringify(result));
+      }
+    });
+  }, [] );
+
+  useEffect(() => {
+    fetchGroceryLists().then( result => {
+      if (result) {
+        setGroceryLists(result);
+        // set the grocery items using the grocery list
+        fetchGroceryItems(result).then( result_2 => {
+          setGroceryItems(result_2);
+        });
       }
     });
   }, [] );
@@ -177,6 +208,7 @@ function MyApp() {
       user = result.data;
       if (result && result.status === 201) {
         setUsers([...users, user]);
+        /*
         for (var i=0; i<user.meal_plan.length; i++) {
           setMealOutlines([...mealOutlines, user.meal_plan.at(i)]);
         }
@@ -186,6 +218,7 @@ function MyApp() {
         for (var k=0; k<user.grocery_lists.length; k++) {
           setGroceryLists([...groceryLists, user.grocery_lists.at(k)]);
         }
+        */
       }
     });
   }
@@ -226,6 +259,17 @@ function MyApp() {
         throw new Error('Invalid username or password.');
       } else {
         localStorage.setItem("isValid", true);
+        var validUser = response.data;
+        console.log('valid user');
+        console.log(validUser);
+        setCurrUser(validUser);
+        console.log('recipe list');
+        console.log(validUser.recipe_list);
+        setRecipes(validUser.recipe_list);
+        setMealOutlines(validUser.meal_plan);
+        setPlannedMeals([]);
+        setGroceryLists(validUser.grocery_lists);
+        setGroceryItems([]);
       }
       return response;
     }
@@ -350,16 +394,6 @@ function MyApp() {
       return false;
     }
   }
-
-  useEffect(() => {
-    fetchUser().then( result => {
-      if (result) {
-        console.log('result');
-        console.log(result);
-        setCurrUser(JSON.stringify(result));
-      }
-    });
-  }, [] );
 
   function updateMealOutlineMealList(meal, date) {
     // check if the mealOutline exists for the given date
@@ -542,18 +576,6 @@ function MyApp() {
     }
   }
 
-  useEffect(() => {
-    fetchGroceryLists().then( result => {
-      if (result) {
-        setGroceryLists(result);
-        // set the grocery items using the grocery list
-        fetchGroceryItems(result).then( result_2 => {
-          setGroceryItems(result_2);
-        });
-      }
-    });
-  }, [] );
-
   async function fetchGroceryLists(){
     try {
       const response = await axios.get('http://localhost:5000/grocery-lists');
@@ -629,13 +651,33 @@ function MyApp() {
     }
   }
 
+  // check if user is authenticated, and route accordingly
+  if (isAuth === false) {
+    return(
+      <div className="container">
+        <BrowserRouter basename="/">
+          <GuestNav />
+          <Routes>
+            <Route path="/" element={<GuestHome />} />
+            <Route
+              path="/login"
+              element={<LoginForm
+                        handleSubmit={authenticateUser}
+                        isValid={localStorage.getItem("isValid")} />} />
+            <Route
+              path="/signup"
+              element={<SignupForm
+                        handleSubmit={updateUserList} />} />
+          </Routes>
+        </BrowserRouter>
+      </div>
+    );
+  }
 
   return (
     <div className="container">
       <BrowserRouter basename="/">
-        {isAuth ? 
-          <NavBar /> :
-          <GuestNav />}
+        <NavBar />
         <Routes>
           <Route element={<PrivateRoutes />}>
               <Route path="/" element={<Home />} />

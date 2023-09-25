@@ -330,7 +330,7 @@ function Planner(props) {
     }
 
     return (
-        <div>
+        <div className='body'>
             <h1>My Planner</h1>
             <h4>{yearView}</h4>
 

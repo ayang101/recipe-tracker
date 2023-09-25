@@ -215,7 +215,7 @@ function GroceryList(props) {
     }
 
     return (
-        <div className='grocery-list'>
+        <div className='body'>
             <h1>Grocery List</h1>
 
             <table className='block'>

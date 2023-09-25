@@ -1,22 +1,86 @@
+/* global styles */
+html *, h1, h2, h3, h4, h5, h6 {
+    font-family: 'Courier New', Courier, monospace;
+}
+
 /* nav bar */
 nav {
     width: 100%;
     position: sticky;
     top: 0;
     left: 0;
-    height: 35px;
+    height: 80px;
+    background-color: #32CD32;
 }
 
 nav ul {
     margin: 0;
-    padding: 8px;
-    background-color: white;
+    padding: 25px;
 }
 
 nav ul li {
     display: inline;
     padding-left: 35px;
 }
+
+.link {
+    color: #FFFFFF;
+    font-size: 20px;
+    font-weight: 100px;
+    width: 250px;
+    margin: 10px auto;
+    padding: 10px;
+}
+
+.link:hover, .link:active {
+    color: #FFFFFF;
+    text-decoration: none;
+    background: rgba(255, 255, 255, 0.225);
+    cursor: pointer;
+}
+
+/* side nav */
+#side-nav {
+    background-color: #32CD32;
+    position: fixed;
+    z-index: 1;
+    margin: 0;
+    padding-left: 12px;
+    padding-top: 60px;
+    height: 100%;
+    width: 110px;
+    top: 0;
+    left: 0;
+    overflow-x: hidden;
+    transition: 0.5s;
+}
+
+.obj-link {
+    font-size: 20px;
+    font-weight: 100px;
+    display: block;
+    padding: 30px 10px 30px 10px;
+}
+
+.obj-link:hover, .obj-link:active {
+    background: rgba(255, 255, 255, 0.225);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.obj-link .side-nav-link {
+    color: white;
+    text-decoration: none;
+    display: block;
+    transition: 0.3s;
+}
+
+/* everything besides the side-nav id */
+.body:not(#side-nav) {
+    transition: 50px .5s;
+    padding: 20px;
+}
+
 
 /* error message */
 .error-field {
@@ -35,9 +99,9 @@ nav ul li {
 }
 
 #table {
-    background: #A0C5E8;
+    background: #e8ffeda2;
     padding: 10px 30px;
-    width: 88%;
+    width: 95%;
 }
 
 .tr {
@@ -75,7 +139,7 @@ nav ul li {
 
 /* recipe form */
 .recipe-form {
-    background: #A0C5E8;
+    background: #ffffff;
 }
 
 /* recipe details */
@@ -270,4 +334,68 @@ ul.tab-list li.active {
     padding: 100px 50px 50px 50px; /* top right bottom left */
     vertical-align: top;
     text-align: left;
+}
+
+/* guest home page */
+.first-section, .second-section {
+    display: flex;
+}
+
+.first-section .caption {
+    background-color: #2a2a2a2d;
+    padding: 70px;
+}
+
+.first-section .caption h2 {
+    color: #ffffff;
+}
+
+.second-section div {
+    width: 100%;
+}
+
+.content {
+    padding: 25px;
+    display: flex;
+}
+
+.content h4 {
+    float: left;
+}
+
+.content p {
+    margin: 0px 0px 0px 350px;
+}
+
+#cook-container {
+    background-color: #32cd323c;
+}
+
+#plan-container {
+    background-color: #32cd327b;
+}
+
+#shop-container {
+    background-color: #32cd32a9;
+}
+
+.caption, .text-segment {
+    font-weight: bold;
+    text-shadow: 1px 1px 2px rgb(170, 170, 170);
+    color: rgb(255, 255, 255);
+}
+
+.footer {
+    padding: 30px;
+    background-color: #32CD32;
+}
+
+/* user home page */
+.home-background {
+    background-color: #ffebb033;
+    display: flex;
+}
+
+.home-background main section {
+    padding: 20px;
 }

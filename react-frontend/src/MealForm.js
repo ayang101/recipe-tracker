@@ -49,6 +49,7 @@ function MealForm(props) {
 
 
     return (
+    <div className='body'>
         <form className='meal-form'>
             <label htmlFor="name">Name</label>
             <input
@@ -80,6 +81,7 @@ function MealForm(props) {
                 onChange={handleChange} />
             <input type="button" value="Submit" onClick={submitForm} />
         </form>
+    </div>
     );
 }
 
