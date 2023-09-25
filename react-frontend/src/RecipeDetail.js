@@ -177,7 +177,6 @@ function RecipeDetail(props) {
                                     })}
                                 </ol>
                             </table>
-                            <h4>Result: {isCheck.toString()}</h4>
                         </div>
                     </td>
                 </tr>
