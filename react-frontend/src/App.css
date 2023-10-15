@@ -100,8 +100,9 @@ nav ul li {
 
 #table {
     background: #e8ffeda2;
-    padding: 10px 30px;
-    width: 95%;
+    padding: 18px 18px;
+    align-items: center;
+    width: 96%;
 }
 
 .tr {

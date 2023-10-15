@@ -154,22 +154,13 @@ function MyApp() {
     try {
       const response = await axios.get('http://localhost:5000/meal-outlines');
       var temp_user = JSON.parse(currUser);
-      console.log('users meal plan');
-      console.log(temp_user.meal_plan);
-      console.log('users meal plan length');
-      console.log((temp_user.meal_plan).length);
-      console.log('in backend');
+      console.log('all meal outlines');
       console.log(response.data.mealOutline_list);
       var temp = (response.data.mealOutline_list).filter((meal_outline, i) => {
-        for (var j=0; j<(temp_user.meal_plan).length; j++) {
-          if (temp_user.meal_plan[j] === meal_outline._id) {
-            return temp_user.meal_plan[j];
-          }
-        }
+        return temp_user.meal_plan.includes(meal_outline._id);
       });
-      console.log("current users' meal plan");
       setMealOutlines(temp);
-      console.log('meal outlines');
+      console.log('current users meal outlines');
       //localStorage.setItem("savedMealPlan", JSON.stringify(temp));
       console.log(temp);
       return temp;
@@ -295,10 +286,10 @@ function MyApp() {
   function removeOneRecipe (index) {
     makeDeleteCall(index).then( result => {
       if (result && result.status === 204) {
-        const updated = recipes.filter((recipe, i) => {
+        const updated = JSON.parse(recipes).filter((recipe, i) => {
           return i !== index
         });
-        setRecipes(updated);
+        setRecipes(JSON.stringify(updated));
       }
     });
   }
@@ -318,18 +309,16 @@ function MyApp() {
   async function fetchAllRecipes(){
     try {
       const response = await axios.get('http://localhost:5000/recipes');
-      var temp = null;
       if (currUser !== null) {
         var temp_user = JSON.parse(currUser);
-        console.log('response.data');
-        console.log(response.data.recipes_list);
         console.log('all recipes');
-        console.log(temp_user);
-        temp = (response.data.recipes_list).filter((recipe, i) => {
-          for (var j=0; j<(temp_user.recipe_list).length; j++) {
-            return temp_user.recipe_list[j] === recipe._id; 
-          }
+        console.log(response.data.recipes_list);
+        console.log('users recipes');
+        console.log(temp_user.recipe_list);
+        var temp = (response.data.recipes_list).filter((recipe, i) => {
+          return temp_user.recipe_list.includes(recipe._id);
         });
+        setRecipes(JSON.stringify(temp));
       }
       console.log("current users' recipes");
       localStorage.setItem("savedRecipes", JSON.stringify(temp));
@@ -384,7 +373,7 @@ function MyApp() {
 
   async function makeDeleteCall(index){
     try {
-      var id = recipes[index]._id
+      var id = JSON.parse(recipes)[index]._id
       const response = await axios.delete('http://localhost:5000/recipes/' + id);
       return response;
     }
@@ -580,16 +569,10 @@ function MyApp() {
     try {
       const response = await axios.get('http://localhost:5000/grocery-lists');
       var temp_user = JSON.parse(currUser);
-      console.log('temp');
-      console.log(response.data.groceryList_list);
       console.log('temp grocery lists');
       console.log(temp_user.grocery_lists);
       var temp = (response.data.groceryList_list).filter((grocery_list, i) => {
-        for (var j=0; j<(temp_user.grocery_lists).length; j++) {
-          if (temp_user.grocery_lists[j] === grocery_list._id) {
-            return temp_user.grocery_lists[j];
-          }
-        }
+        return temp_user.grocery_lists.includes(grocery_list._id);
       });
       console.log("current users' grocery list");
       setGroceryLists(temp);

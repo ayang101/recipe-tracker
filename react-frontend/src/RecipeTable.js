@@ -40,10 +40,7 @@ function RecipeTableBody(props) {
               </div>
           </div>
           <div id='table'>
-            {console.log('props.recipeData')}
-            {console.log(JSON.parse(props.recipeData.toString().replace(/,+/g,',')))}
-          {
-            JSON.parse(props.recipeData).filter(row => {
+          {JSON.parse(props.recipeData).filter(row => {
               if (query === '') {
                 return row;
               } else if (row.name.toLowerCase().includes(query.toLowerCase())) {
@@ -131,11 +128,9 @@ function RecipeTableBody(props) {
                     <div className='td total-time'>{row.totalTime || '--'}</div>
                   </div>
                 </Link>
-                {/*
                 <div className='td'>
                   <button onClick={() => props.removeRecipe(index)}>Delete</button>
                 </div>
-              */}
               </div>
             ))
           }
